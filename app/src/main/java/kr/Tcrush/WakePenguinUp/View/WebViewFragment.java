@@ -26,6 +26,7 @@ import im.delight.android.webview.AdvancedWebView;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.Tool.WebViewController;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 
 public class WebViewFragment extends Fragment implements View.OnClickListener, AdvancedWebView.Listener {
@@ -59,8 +60,17 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
         wv_webview = view.findViewById(R.id.wv_webview);
         wv_webview.setListener(getActivity(),this);
+        wv_webview.setThirdPartyCookiesEnabled(false);
+        wv_webview.setCookiesEnabled(false);
+        wv_webview.setMixedContentAllowed(false);
+        wv_webview.setGeolocationEnabled(true);
 
-        wv_webview.loadUrl("https://www.naver.com/");
+        wv_webview.getSettings().setSupportMultipleWindows(true);
+        wv_webview.getSettings().setJavaScriptEnabled(true);
+        wv_webview.setWebChromeClient(new WebViewController(getActivity()));
+
+
+        wv_webview.loadUrl("https://www.youtube.com/watch?v=t0eexjPhEdQ");
 
         ll_webToolbar = view.findViewById(R.id.ll_webToolbar);
 
