@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">WakePeguinUp</string>
+    <string name="popup_mainBackPressNoti">\'뒤로\'버튼을 한번 더 누르면 종료합니다.</string>
+    <string name="basic_cancel">취소</string>
+    <string name="basic_confirm">확인</string>
+    <string name="popup_urlListEdit_title">수정</string>
+    <string name="popup_urlListEdit_message">수정하시겠습니까?</string>
+    <string name="side_listEdit">편집</string>
+
+    <string name="service_title">WPU</string>
+    <string name="service_message">WPU 앱이 사용중입니다.</string>
+    <string name="service_tag">WPU</string>
+</resources>

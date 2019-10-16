@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="defaultWhite">#FFFFFF</color>
+    <color name="dialogTitleBlack">#000f2c</color>
+    <color name="dialogCancleGray">#bdbdbd</color>
+    <color name="defaultBlue">#2cc1d4</color>
+    <color name="blank">#00000000</color>
+</resources>

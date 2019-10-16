@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageView
+            android:id="@+id/iv_help"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/sample_tutorial_1"/>
+
+    <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fb_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/icon_penguin"
+            fab:fab_colorNormal="@color/blank"
+            fab:fab_colorPressed="@color/blank"
+            fab:fab_colorRipple="@color/blank"
+
+            tools:ignore="RtlHardcoded" />
+
+
+</FrameLayout>

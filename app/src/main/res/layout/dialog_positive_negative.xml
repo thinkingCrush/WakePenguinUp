@@ -1,0 +1,87 @@
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:background="@drawable/dialog_round_back"
+        tools:context=".MainActivity">
+    <!-- 상단 -->
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2">
+        <TextView
+                android:id="@+id/tv_dialogPositiveNagative_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_centerInParent="true"
+                android:letterSpacing="-0.03"
+                android:textColor="@color/dialogTitleBlack"
+                android:textStyle="bold"
+                android:textSize="16.3dp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--여기다가 이미지 가운데 어케만들지?-->
+        <ImageView
+                android:id="@+id/iv_dialog_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+        <EditText
+                android:id="@+id/et_dialog_urlName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        <EditText
+                android:id="@+id/et_dialog_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/tv_dialogPositiveNagative_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                android:gravity="center"
+                android:lineSpacingExtra="3dip"/>
+    </LinearLayout>
+
+    <!-- 하단 버튼 레이아웃 -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
+        <Button
+                android:id="@+id/btn_dialogNagative"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="13.5dp"
+                android:background="@drawable/dialog_negative_back"
+                android:textAllCaps="false"
+                android:textColor="@color/defaultWhite"
+                android:text="@string/basic_cancel"/>
+        <Button
+                android:id="@+id/btn_dialogPositive"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="13.5dp"
+                android:textColor="@color/defaultWhite"
+                android:background="@drawable/dialog_positive_back"
+                android:textAllCaps="false"
+                android:text="@string/basic_confirm"/>
+    </LinearLayout>
+</LinearLayout>
