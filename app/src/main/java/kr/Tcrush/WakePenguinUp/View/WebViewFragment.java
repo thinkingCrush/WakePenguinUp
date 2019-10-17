@@ -50,6 +50,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         return view;
     }
     private void initView (View view){
+        //TEST
         et_url=view.findViewById(R.id.et_url);
 
         iv_star = view.findViewById(R.id.iv_star);
