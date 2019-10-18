@@ -59,5 +59,41 @@ public class UrlListFragment extends Fragment {
                 .build());
         sd_urlEditList.setMenu(menu);
 
+        sd_urlEditList.setOnMenuItemClickListener(new SlideAndDragListView.OnMenuItemClickListener() {
+            @Override
+            public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
+                switch (direction){
+                    case MenuItem.DIRECTION_LEFT :
+                        switch (buttonPosition){
+                            case 0:
+                                return Menu.ITEM_SCROLL_BACK ;
+                        }
+                        break;
+                    case MenuItem.DIRECTION_RIGHT :
+                        switch (buttonPosition){
+                            case 0 :
+                                return Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP ;
+                        }
+                        break;
+                        default:
+                            return Menu.ITEM_NOTHING;
+                }
+                return Menu.ITEM_NOTHING;
+            }
+        });
+        sd_urlEditList.setOnSlideListener(new SlideAndDragListView.OnSlideListener() {
+            @Override
+            public void onSlideOpen(View view, View parentView, int position, int direction) {
+
+            }
+
+            @Override
+            public void onSlideClose(View view, View parentView, int position, int direction) {
+
+            }
+        });
+
     }
+
+
 }

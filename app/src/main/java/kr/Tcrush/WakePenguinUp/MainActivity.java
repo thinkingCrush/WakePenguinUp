@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -124,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -229,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tv_sideListEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mDrawerLayout.closeDrawer(drawerContainer);
                 mainChageMenu(new UrlListFragment());
             }
         });
@@ -267,6 +267,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
+    /**
+     * 사이드바 나오면 플로팅 버튼 없애고,
+     * 사이드바 들어가면 다시 플로팅 버튼 나오게
+     * */
     public static class DrawerClickListener implements View.OnClickListener {
         Context context;
         public DrawerClickListener (Context context){
@@ -387,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private long shakeTime ;
     private static final int SHAKE_SKIP_TIME = 500;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 2.7f;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 5.4f;
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
