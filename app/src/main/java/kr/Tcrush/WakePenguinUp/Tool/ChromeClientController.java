@@ -1,6 +1,5 @@
 package kr.Tcrush.WakePenguinUp.Tool;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -12,19 +11,19 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 
-import kr.Tcrush.WakePenguinUp.MainActivity;
+public class ChromeClientController extends WebChromeClient {
 
-public class WebViewController extends WebChromeClient {
     private View mCustomView;
     private Activity mActivity;
 
-    public WebViewController(Activity activity) {
+    public ChromeClientController(Activity activity) {
         this.mActivity = activity;
     }
 
     @Override
     public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
         result.confirm();
+        Dlog.e("test 4444");
         return super.onJsAlert(view, url, message, result);
     }
 
@@ -32,16 +31,16 @@ public class WebViewController extends WebChromeClient {
     private FullscreenHolder mFullscreenContainer;
     private CustomViewCallback mCustomViewCollback;
 
+
+
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-
         if (mCustomView != null) {
             callback.onCustomViewHidden();
             return;
         }
 
-
-        mOriginalOrientation =ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        mOriginalOrientation = mActivity.getRequestedOrientation();
 
         FrameLayout decor = (FrameLayout) mActivity.getWindow().getDecorView();
 
@@ -50,19 +49,14 @@ public class WebViewController extends WebChromeClient {
         decor.addView(mFullscreenContainer, ViewGroup.LayoutParams.MATCH_PARENT);
         mCustomView = view;
         mCustomViewCollback = callback;
-        mActivity.setRequestedOrientation(mOriginalOrientation);
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-    }
-
-    @Override
-    public void onCloseWindow(WebView window) {
-        super.onCloseWindow(window);
-        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override
     public void onHideCustomView() {
         if (mCustomView == null) {
+
             return;
         }
 
@@ -72,7 +66,7 @@ public class WebViewController extends WebChromeClient {
         mCustomView = null;
         mCustomViewCollback.onCustomViewHidden();
 
-        mActivity.setRequestedOrientation(mOriginalOrientation);
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
 
@@ -88,6 +82,6 @@ public class WebViewController extends WebChromeClient {
             return true;
         }
     }
+
+
 }
-
-

@@ -24,6 +24,8 @@
 
 
         <activity android:name=".MainActivity"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="portrait"
                 android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -35,6 +37,7 @@
         <service
                 android:name=".View.Floating.FloatingService"
                 android:enabled="true"
+                android:configChanges="keyboardHidden|orientation|screenSize"
                 android:exported="true"/>
 
 

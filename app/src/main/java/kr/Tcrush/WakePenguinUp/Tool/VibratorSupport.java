@@ -12,9 +12,9 @@ public class VibratorSupport {
         try{
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                vibrator.vibrate(VibrationEffect.createOneShot(1000, -1));
+                vibrator.vibrate(VibrationEffect.createOneShot(300, -1));
             }else{
-                vibrator.vibrate(1000);
+                vibrator.vibrate(300);
             }
         }catch (Exception e){
             e.printStackTrace();

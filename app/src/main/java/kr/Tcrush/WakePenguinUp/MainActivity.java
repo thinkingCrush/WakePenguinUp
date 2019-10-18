@@ -1,6 +1,8 @@
 package kr.Tcrush.WakePenguinUp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -8,12 +10,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,9 +35,13 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
+import java.util.Objects;
+
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
+import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 import kr.Tcrush.WakePenguinUp.View.HelpFragment;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListAdapter;
 import kr.Tcrush.WakePenguinUp.View.UrlListFragment;
@@ -71,45 +79,106 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static RelativeLayout drawerContainer;
     TextView tv_sideListEdit ;
 
-
+    public static Context mainContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+        mainContext=getBaseContext();
         initFragment(getBaseContext());
         initView();
         CheckPermission.checkPermission(this);
+        initTouchListener();
+
     }
+
 
     protected static int pageNum;
     private static long time =0;
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mDrawerLayout.closeDrawer(drawerContainer);
+        if(new WebViewFragment().canGoback()){
+            new WebViewFragment().goBack();
         }else{
-            if(System.currentTimeMillis()-time>=2000){
-                time = System.currentTimeMillis();
-                Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
+            if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+                mDrawerLayout.closeDrawer(drawerContainer);
+            }else{
+                if(System.currentTimeMillis()-time>=2000){
+                    time = System.currentTimeMillis();
+                    Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
 
-            }else if(System.currentTimeMillis() -time < 2000){
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finishAffinity();
-                        System.runFinalization();
-                        System.exit(0);
-                    }
-                },300);
+                }else if(System.currentTimeMillis() -time < 2000){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finishAffinity();
+                            System.runFinalization();
+                            System.exit(0);
+                        }
+                    },300);
+                }
             }
+        }
+
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startFloating(getBaseContext());
+    }
+
+    public static Intent intent ;
+    private void startFloating(Context context){
+        stopFloating(context);
+        try{
+            if(context != null){
+                if(intent == null){
+                    intent = new Intent(context, FloatingService.class);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Objects.requireNonNull(context).startForegroundService(intent);
+                }else {
+                    Objects.requireNonNull(context).startService(intent);
+                }
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopFloating(getBaseContext());
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopFloating(getBaseContext());
+    }
+
+    private void stopFloating(Context context){
+        try{
+            if(intent != null){
+                Dlog.e("stopFloating!!!");
+                if(context != null){
+                    context.stopService(intent);
+                }
+
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void mainChageMenu(Fragment changeFragment){
@@ -238,17 +307,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Dlog.e("touch Lock");
             TouchLockFlag = true;
             registerTouch();
+            stopFloating(getBaseContext());
         }catch (Exception e){
             e.printStackTrace();
         }
 
     }
 
-    public void touchUnLock(){
+    public void touchUnLock(Context context){
         try{
             Dlog.e("touch Un Lock");
             TouchLockFlag = false;
             unRegisterTouch();
+            startFloating(context);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -280,8 +351,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-    private SensorManager sensorManager;
-    private Sensor sensor;
+    private static SensorManager sensorManager;
+    private static Sensor sensor;
 
     private void initTouchListener(){
         try{
@@ -297,7 +368,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void registerTouch(){
         try{
-            sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
+            if(sensorManager != null){
+                sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -330,7 +404,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Float f = (gravityX * gravityX) +(gravityY * gravityY) + (gravityZ * gravityZ);
             double squaredD = Math.sqrt(f.doubleValue());
             float gForce = (float)squaredD;
-
             if(gForce > SHAKE_THRESHOLD_GRAVITY){
                 long currentTime = System.currentTimeMillis();
                 if(shakeTime + SHAKE_SKIP_TIME > currentTime){
@@ -338,8 +411,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
                 shakeTime = currentTime;
                 shakeTime ++;
-                Dlog.e("shake 발생 !!@!@!@!@");
-                touchUnLock();
+                new VibratorSupport().doVibrator(mainContext);
+                touchUnLock(mainContext);
             }
         }
     }

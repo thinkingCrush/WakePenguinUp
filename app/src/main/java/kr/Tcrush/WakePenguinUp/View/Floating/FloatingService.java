@@ -32,8 +32,11 @@ import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NotificationCompat;
 
+import java.util.Objects;
+
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 
 public class FloatingService extends Service implements View.OnClickListener, View.OnTouchListener {
 
@@ -126,13 +129,16 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
 
+        if(mWindowManager != null) {
+            if(out_coordinatorLayout != null) mWindowManager.removeView(out_coordinatorLayout);
+        }
         try{
             stopForeground(true);
         }catch (Exception e){
             e.printStackTrace();
         }
+        super.onDestroy();
     }
 
     ViewTreeObserver.OnWindowFocusChangeListener onWindowFocusChangeListener = new ViewTreeObserver.OnWindowFocusChangeListener() {
@@ -162,7 +168,12 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()){
+            case R.id.rl_outfloatingLayout :
+                Dlog.e("click!!");
+                new FloatingViewController().screenLock(getBaseContext());
+                break;
+        }
     }
 
     private boolean moveFAB = false;

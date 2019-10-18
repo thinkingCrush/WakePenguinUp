@@ -2,13 +2,23 @@ package kr.Tcrush.WakePenguinUp.View.Floating;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import kr.Tcrush.WakePenguinUp.MainActivity;
+import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.Dlog;
+import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 
 public class FloatingViewController {
 
@@ -55,8 +65,10 @@ public class FloatingViewController {
     public final int ImageViewFloating = 3;
     public final int TextViewFloating = 4;
     public final int AnimationFloating = 5;
-    public void initHandler(Context context, TextView tv_floating_count, LinearLayout ll_floating,
-                            ImageView iv_floating_lock , FloatingGauge fg_outGauge, RelativeLayout rl_outfloatingLayout){
+
+
+    public void initHandler(final Context context, final TextView tv_floating_count, LinearLayout ll_floating,
+                            final ImageView iv_floating_lock , FloatingGauge fg_outGauge, RelativeLayout rl_outfloatingLayout){
         if(floatingHandler == null){
             floatingHandler = new Handler(new Handler.Callback() {
                 @Override
@@ -67,15 +79,100 @@ public class FloatingViewController {
                         case GaugeFloating :
                             break;
                         case ImageViewFloating :
+                            Dlog.e("test ImageViewFloating");
+                            iv_floating_lock.setVisibility(View.VISIBLE);
+                            iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_lock_closeed,null));
+
                             break;
                         case TextViewFloating :
+                            Dlog.e("test TextViewFloating");
+                            String count = String.valueOf(msg.obj);
+                            if(count.equals("0")){
+                                tv_floating_count.setVisibility(View.GONE);
+                            }else{
+                                iv_floating_lock.setVisibility(View.GONE);
+                                tv_floating_count.setVisibility(View.VISIBLE);
+                                tv_floating_count.setText(count);
+                            }
+
                             break;
                         case AnimationFloating :
+                            //timer
                             break;
+
                     }
                     return true;
                 }
             });
+        }
+    }
+
+
+
+    private static Timer timer = null;
+    private static int lockCount = 0;
+    public void screenLock(final Context context){
+        Dlog.e("test 1111");
+        try{
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    try{
+                        lockCount ++;
+                        Dlog.e("test 2222 : " +lockCount );
+                        switch (lockCount){
+                            case 1 :
+                                if(floatingHandler != null){
+                                    floatingHandler.obtainMessage(TextViewFloating,"3").sendToTarget();
+                                }
+                                break;
+                            case 2 :
+                                if(floatingHandler != null){
+                                    floatingHandler.obtainMessage(TextViewFloating,"2").sendToTarget();
+                                }
+                                break;
+                            case 3 :
+                                if(floatingHandler != null){
+                                    floatingHandler.obtainMessage(TextViewFloating,"1").sendToTarget();
+                                }
+                                break;
+                            case 4 :
+                                if(floatingHandler != null){
+                                    floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
+                                    floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
+                                }
+                                break;
+                            case 5 :
+                                try{
+                                    if(MainActivity.intent!=null && context != null){
+                                        context.stopService(MainActivity.intent);
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                new VibratorSupport().doVibrator(context);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        new MainActivity().touchLock();
+                                    }
+                                });
+
+                                this.cancel();
+                                lockCount  =0;
+                                break;
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
+                }
+            },0,1000);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

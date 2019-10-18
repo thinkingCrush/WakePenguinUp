@@ -1,9 +1,8 @@
 package kr.Tcrush.WakePenguinUp.View;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,9 +27,8 @@ import java.util.Objects;
 import im.delight.android.webview.AdvancedWebView;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.ChromeClientController;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
-import kr.Tcrush.WakePenguinUp.Tool.WebViewController;
-import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 
 public class WebViewFragment extends Fragment implements View.OnClickListener, AdvancedWebView.Listener {
     EditText et_url;
@@ -35,7 +36,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     LinearLayout ll_webToolbar;
 
 
-    AdvancedWebView wv_webview;
+    static AdvancedWebView wv_webview;
+    //WebView wv_webview;
 
     InputMethodManager inputMethodManager;
 
@@ -60,16 +62,12 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         iv_list.setOnClickListener(new MainActivity.DrawerClickListener(getContext()));
 
         wv_webview = view.findViewById(R.id.wv_webview);
-        wv_webview.setListener(getActivity(),this);
-        wv_webview.setThirdPartyCookiesEnabled(false);
-        wv_webview.setCookiesEnabled(false);
-        wv_webview.setMixedContentAllowed(false);
-        wv_webview.setGeolocationEnabled(true);
-
-        wv_webview.getSettings().setSupportMultipleWindows(true);
         wv_webview.getSettings().setJavaScriptEnabled(true);
-        wv_webview.setWebChromeClient(new WebViewController(getActivity()));
+        wv_webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        wv_webview.getSettings().setSupportMultipleWindows(true);
 
+        wv_webview.setWebChromeClient(new ChromeClientController(getActivity()));
+        wv_webview.setWebViewClient(new WebViewClient());
 
         wv_webview.loadUrl("https://www.youtube.com/watch?v=t0eexjPhEdQ");
 
@@ -111,32 +109,30 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     }
 
 
-    private void startFloating(){
-        try{
-            intent = new Intent(Objects.requireNonNull(getActivity()).getBaseContext(), FloatingService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Objects.requireNonNull(getContext()).startForegroundService(intent);
-            }else {
-                Objects.requireNonNull(getContext()).startService(intent);
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
+    public boolean canGoback (){
+        if(wv_webview != null){
+            return wv_webview.canGoBack();
         }
+        return false;
+    }
+    public void goBack (){
+        if(wv_webview != null){
+            wv_webview.goBack();
+        }
+
     }
 
-    private void stopFloating(){
-        try{
-            if(intent != null){
-                Objects.requireNonNull(getContext()).stopService(intent);
-            }
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
-    private static Intent intent;
+
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -148,14 +144,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             e.printStackTrace();
         }
 
-        startFloating();
 
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopFloating();
     }
 
     public void loadUrl (String url){
