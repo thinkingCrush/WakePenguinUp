@@ -1,20 +1,22 @@
 package kr.Tcrush.WakePenguinUp.View.ListViewTool;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 
 public class UrlListAdapter extends BaseAdapter{
 
@@ -57,9 +59,10 @@ public class UrlListAdapter extends BaseAdapter{
         if(v == null){
             viewHolder = new ViewHolder();
             v = inflater.inflate(R.layout.listitem_urllist, null);
-            viewHolder.iv_icon = v.findViewById(R.id.iv_icon);
-            viewHolder.tv_strUrl = v.findViewById(R.id.tv_strUrl);
-            viewHolder.tv_strUrlName = v.findViewById(R.id.tv_strUrlName);
+            viewHolder.fl_drawer_icon_background = v.findViewById(R.id.fl_drawer_icon_background);
+            viewHolder.tv_urlFirstText = v.findViewById(R.id.tv_urlFirstText);
+            viewHolder.tv_strAddressName = v.findViewById(R.id.tv_strAddressName);
+            viewHolder.ll_drawerList = v.findViewById(R.id.ll_drawerList);
 
 
             v.setTag(viewHolder);
@@ -70,11 +73,19 @@ public class UrlListAdapter extends BaseAdapter{
 
         String strUrl = getItem(position).url;
         String strUrlName = getItem(position).urlName;
-        String strUrlFirstText = getItem(position).urlFirstText;
         String textBgColor = getItem(position).textBgColor;
+        String firstText = getItem(position).urlFirstText;
 
-        viewHolder.tv_strUrl.setText(String.valueOf(strUrl));
-        viewHolder.tv_strUrlName.setText(String.valueOf(strUrlName));
+        Dlog.e("strUrl : " + strUrl);
+        Dlog.e("strUrlName : " + strUrlName);
+        viewHolder.tv_strAddressName.setText(String.valueOf(strUrlName));
+        Drawable roundDrawable = mContext.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
+
+        roundDrawable.setColorFilter(Color.parseColor(textBgColor), PorterDuff.Mode.SRC_ATOP);
+        viewHolder.fl_drawer_icon_background.setBackground(roundDrawable);
+
+        viewHolder.tv_urlFirstText.setText(firstText);
+
 
 
         return v;
@@ -103,10 +114,12 @@ public class UrlListAdapter extends BaseAdapter{
 
     class ViewHolder{
 
+        public LinearLayout ll_drawerList = null;
 
-        public ImageView iv_icon = null;
-        public TextView tv_strUrl = null;
-        public TextView tv_strUrlName = null;
+        public FrameLayout fl_drawer_icon_background = null;
+        public TextView tv_strAddressName = null;
+        public TextView tv_urlFirstText = null;
+
 
 
     }

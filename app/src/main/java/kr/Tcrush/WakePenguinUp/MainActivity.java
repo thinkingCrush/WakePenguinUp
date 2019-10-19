@@ -2,8 +2,8 @@ package kr.Tcrush.WakePenguinUp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
@@ -14,15 +14,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -36,8 +36,10 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
+import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * */
 
     static DrawerLayout mDrawerLayout;
-    SlideAndDragListView slideAndDragListView;
+    SlideAndDragListView sd_listview;
     static RelativeLayout drawerContainer;
     TextView tv_sideListEdit ;
 
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }else{
             if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
                 mDrawerLayout.closeDrawer(drawerContainer);
+                startFloating(getBaseContext());
             }else{
                 if(System.currentTimeMillis()-time>=2000){
                     time = System.currentTimeMillis();
@@ -128,11 +131,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        startFloating(getBaseContext());
+        if(new SharedWPU().getNotFirstUser(getBaseContext())){
+            startFloating(getBaseContext());
+        }
     }
 
     public static Intent intent ;
-    private void startFloating(Context context){
+    public static boolean FloatingStart = false;
+    public void startFloating(Context context){
         stopFloating(context);
         try{
             if(context != null){
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
 
             }
-
+            FloatingStart = true;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -164,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         stopFloating(getBaseContext());
     }
 
-    private void stopFloating(Context context){
+    public static void stopFloating(Context context){
         try{
             if(intent != null){
                 Dlog.e("stopFloating!!!");
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             }
 
-
+            FloatingStart = false;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -209,9 +215,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    private void initFragment(Context contedxt){
+    private void initFragment(Context context){
         //도움말 먼저 보여줄 것인지 아닌지 보고 mainChangeMenu
-        if(new SharedWPU().getFirstUser(contedxt)){
+        if(new SharedWPU().getNotFirstUser(context)){
             //한번 들어왔던 사람임
             mainChageMenu(new WebViewFragment());
         }else{
@@ -221,15 +227,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void initView(){
-        slideAndDragListView = findViewById(R.id.sd_listview);
+        sd_listview = findViewById(R.id.sd_listview);
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                stopFloating(mainContext);
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                startFloating(mainContext);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+
         drawerContainer = findViewById(R.id.drawerContainer);
         tv_sideListEdit = findViewById(R.id.tv_sideListEdit);
         tv_sideListEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDrawerLayout.closeDrawer(drawerContainer);
+                mDrawerLayout.closeDrawer(drawerContainer);mDrawerLayout.closeDrawer(drawerContainer);
                 mainChageMenu(new UrlListFragment());
+
             }
         });
         initDrawerListView();
@@ -260,9 +289,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 .setTextSize(20)//set text size
                 .setIcon(getResources().getDrawable(R.drawable.baseline_face_black_36,null))// set icon
                 .build());
-        slideAndDragListView.setMenu(menu);
+        sd_listview.setMenu(menu);
 
-        slideAndDragListView.setAdapter(new UrlListAdapter(getBaseContext(),new SharedWPU().getUrlArrayList(getBaseContext())));
+        sd_listview.setAdapter(new UrlListAdapter(getBaseContext(),new SharedWPU().getUrlArrayList(getBaseContext())));
+        sd_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                try{
+                    view.setBackgroundColor(Color.parseColor("#ffffff"));
+                    ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getBaseContext());
+                    UrlArray urlArray = urlArrays.get(position);
+                    new WebViewFragment().loadUrl(urlArray.url);
+                    mDrawerLayout.closeDrawer(drawerContainer);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
 
@@ -287,6 +331,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if (inputMethodManager != null) {
                     inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(),0);
                 }
+
+
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -424,5 +470,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

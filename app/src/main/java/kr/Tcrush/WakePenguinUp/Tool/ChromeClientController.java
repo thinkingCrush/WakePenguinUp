@@ -3,6 +3,8 @@ package kr.Tcrush.WakePenguinUp.Tool;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+
+import androidx.annotation.Nullable;
 
 public class ChromeClientController extends WebChromeClient {
 
@@ -23,13 +27,13 @@ public class ChromeClientController extends WebChromeClient {
     @Override
     public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
         result.confirm();
-        Dlog.e("test 4444");
         return super.onJsAlert(view, url, message, result);
     }
 
-    private int mOriginalOrientation;
+
     private FullscreenHolder mFullscreenContainer;
     private CustomViewCallback mCustomViewCollback;
+
 
 
 
@@ -40,7 +44,6 @@ public class ChromeClientController extends WebChromeClient {
             return;
         }
 
-        mOriginalOrientation = mActivity.getRequestedOrientation();
 
         FrameLayout decor = (FrameLayout) mActivity.getWindow().getDecorView();
 
@@ -49,7 +52,7 @@ public class ChromeClientController extends WebChromeClient {
         decor.addView(mFullscreenContainer, ViewGroup.LayoutParams.MATCH_PARENT);
         mCustomView = view;
         mCustomViewCollback = callback;
-        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
     }
 
@@ -81,7 +84,14 @@ public class ChromeClientController extends WebChromeClient {
         public boolean onTouchEvent(MotionEvent evt) {
             return true;
         }
+
+        @Override
+        protected void onConfigurationChanged(Configuration newConfig) {
+            super.onConfigurationChanged(newConfig);
+        }
     }
+
+
 
 
 }

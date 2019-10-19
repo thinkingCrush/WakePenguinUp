@@ -13,7 +13,7 @@ import java.util.Objects;
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 
 public class SharedWPU {
-    public boolean getFirstUser(Context context){
+    public boolean getNotFirstUser(Context context){
         SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
         return firstUser.getBoolean("FirstUser",false);
 
@@ -91,9 +91,9 @@ public class SharedWPU {
             for (int i = 0; i < urlArrayList.size(); i++) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("url",urlArrayList.get(i).url);
-                jsonObject.put("urlName",urlArrayList.get(i).url);
-                jsonObject.put("urlFirstText",urlArrayList.get(i).url);
-                jsonObject.put("textBgColor",urlArrayList.get(i).url);
+                jsonObject.put("urlName",urlArrayList.get(i).urlName);
+                jsonObject.put("urlFirstText",urlArrayList.get(i).urlFirstText);
+                jsonObject.put("textBgColor",urlArrayList.get(i).textBgColor);
 
                 a.put(jsonObject);
             }
@@ -105,17 +105,28 @@ public class SharedWPU {
         return null;
     }
 
+    /**
+     *
+     * F44336
+     * 87CEFA
+     * 3F51B5
+     *
+     * */
+
     private ArrayList<UrlArray> getDefaultArray (){
         try{
             ArrayList<UrlArray> urlArrays = new ArrayList<>();
-            urlArrays.add(new UrlArray("https://www.youtube.com/?gl=KR&hl=ko","유튜브","Y","#F4FA58"));
-            urlArrays.add(new UrlArray("https://www.naver.com/","네이버","N","#F78181"));
-            urlArrays.add(new UrlArray("https://www.google.com/","구글","G","#0080FF"));
+            urlArrays.add(new UrlArray("https://www.youtube.com/?gl=KR&hl=ko","유튜브","Y","#87cefa"));
+            urlArrays.add(new UrlArray("https://www.naver.com/","네이버","N","#f44336"));
+            urlArrays.add(new UrlArray("https://www.google.com/","구글","G","#3f51b5"));
             return urlArrays;
         }catch (Exception e){
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void randomColor(){
     }
 
 

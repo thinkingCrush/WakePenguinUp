@@ -1,14 +1,19 @@
 package kr.Tcrush.WakePenguinUp.View;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -17,6 +22,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +34,9 @@ import im.delight.android.webview.AdvancedWebView;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.ChromeClientController;
+import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 
 public class WebViewFragment extends Fragment implements View.OnClickListener, AdvancedWebView.Listener {
     EditText et_url;
@@ -54,6 +62,25 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     private void initView (View view){
         //TEST
         et_url=view.findViewById(R.id.et_url);
+        et_url.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_SEARCH){
+                    try{
+                        String inputData =String.valueOf(textView.getText()) ;
+                        inputData = checkUrlText(inputData);
+                        loadUrl(inputData);
+                        //키보드 숨기기
+                        if (inputMethodManager != null) {
+                            inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                return true;
+            }
+        });
 
         iv_star = view.findViewById(R.id.iv_star);
         iv_list = view.findViewById(R.id.iv_list);
@@ -69,7 +96,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         wv_webview.setWebChromeClient(new ChromeClientController(getActivity()));
         wv_webview.setWebViewClient(new WebViewClient());
 
-        wv_webview.loadUrl("https://www.youtube.com/watch?v=t0eexjPhEdQ");
+        loadUrl("https://sports.news.naver.com/index.nhn");
 
         ll_webToolbar = view.findViewById(R.id.ll_webToolbar);
 
@@ -79,7 +106,47 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
         }
 
+        if(!MainActivity.FloatingStart){
+            try{
+                Context context = getContext();
+                if(context != null){
+                    Intent intent = MainActivity.intent;
+                    if(intent == null){
+                        intent = new Intent(context, FloatingService.class);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Objects.requireNonNull(context).startForegroundService(intent);
+                    }else {
+                        Objects.requireNonNull(context).startService(intent);
+                    }
 
+                }
+                MainActivity.FloatingStart = true;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private String checkUrlText(String data){
+        //URL 이 어떻게 이상한지 체크해야하는데,??
+        try{
+            data = data.replace("\r","");
+            data = data.replace("\n","");
+
+            if(data.length()>=5 && !data.substring(0,5).contains("http")){
+                data = "https://"+data;
+            }
+
+
+            return data;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return data;
     }
 
     private final int viewStarOn = 1;
@@ -151,6 +218,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         try{
             if(wv_webview!=null){
                 wv_webview.loadUrl(url);
+                et_url.setText(url);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -189,5 +257,10 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void onExternalPageRequest(String url) {
 
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }
