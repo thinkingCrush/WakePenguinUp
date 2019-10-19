@@ -21,6 +21,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+
+import kr.Tcrush.WakePenguinUp.Data.UrlArray;
+import kr.Tcrush.WakePenguinUp.Data.UrlArrayManager;
 import kr.Tcrush.WakePenguinUp.R;
 
 public class DialogManager  extends AlertDialog.Builder {
@@ -43,8 +47,6 @@ public class DialogManager  extends AlertDialog.Builder {
         static Button btn_dialogNagative;
 
 
-        View.OnClickListener onClickListener;
-        View.OnClickListener onNegativeClickListener;
 
         String deleteDialogText = null;
         String cancleDialogText = null;
@@ -91,14 +93,18 @@ public class DialogManager  extends AlertDialog.Builder {
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     try{
                         String inputName = String.valueOf(charSequence);
-                        if(inputName!=null && !inputName.equals("")){
+
+                        String checkName = inputName.replace(" ","");
+                        if(inputName!=null && !inputName.equals("") &&!checkName.equals("")){
                             try{
                                 tv_dialog_firstText.setText(inputName.substring(0,1));
                             }catch (Exception e){
-                                tv_dialog_firstText.setText("?");
+                                tv_dialog_firstText.setText("바");
                                 e.printStackTrace();
                             }
 
+                        }else{
+                            tv_dialog_firstText.setText("?");
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -116,38 +122,30 @@ public class DialogManager  extends AlertDialog.Builder {
 
             btn_dialogPositive = findViewById(R.id.btn_dialogPositive);
             btn_dialogPositive.setOnTouchListener(new DialogButtonClickEffect());
-            if(onClickListener != null){
-                btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String inputName = String.valueOf(et_dialog_urlName.getText());
-                        String inputUrl = String.valueOf(et_dialog_url.getText());
-                    }
-                });
-            }
+            btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String inputName = String.valueOf(et_dialog_urlName.getText());
+                    String inputUrl = String.valueOf(et_dialog_url.getText());
+                    String firstName = inputName.substring(0,1);
+
+                    ArrayList<UrlArray> urlArrays = new ArrayList<>();
+                    urlArrays = new SharedWPU().getUrlArrayList(context);
+                    urlArrays.add(new UrlArray(inputUrl,inputName,firstName,color));
+
+                    new UrlArrayManager().setUrlArrayList(context,urlArrays);
+
+                    dismiss();
+                }
+            });
             btn_dialogNagative = findViewById(R.id.btn_dialogNagative);
             btn_dialogNagative.setOnTouchListener(new DialogButtonClickEffect());
-            if(onNegativeClickListener != null){
-                btn_dialogNagative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dismiss();
-                    }
-                });
-                btn_dialogPositive.setText(deleteDialogText);
-                btn_dialogNagative.setText(cancleDialogText);
-            }else {
-                btn_dialogNagative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-                            dismiss();
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
+            btn_dialogNagative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
 
             Window window = getWindow();
             if( window != null ) {
