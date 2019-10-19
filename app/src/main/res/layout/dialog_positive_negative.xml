@@ -11,50 +11,56 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.2">
-        <TextView
-                android:id="@+id/tv_dialogPositiveNagative_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_centerInParent="true"
-                android:letterSpacing="-0.03"
-                android:textColor="@color/dialogTitleBlack"
-                android:textStyle="bold"
-                android:textSize="16.3dp"/>
+            android:layout_weight="0.3"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+        <FrameLayout
+                android:id="@+id/fl_dialog_icon_background"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/drawerlayout_listitem_icon_background">
+            <TextView
+                    android:id="@+id/tv_dialog_firstText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="25dp"/>
+
+        </FrameLayout>
     </RelativeLayout>
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginBottom="30dp">
 
             <!--여기다가 이미지 가운데 어케만들지?-->
-        <ImageView
-                android:id="@+id/iv_dialog_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+
         <EditText
                 android:id="@+id/et_dialog_urlName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:background="@drawable/et_border_url"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:hint="바로가기 이름"
+                android:text="바로가기"
+                android:textSize="20dp"
+                android:layout_marginBottom="5dp"/>
         <EditText
                 android:id="@+id/et_dialog_url"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        <TextView
-                android:id="@+id/tv_dialogPositiveNagative_message"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/et_border_url"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:hint="URL"
                 android:textSize="15dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:paddingTop="30dp"
-                android:paddingBottom="30dp"
-                android:gravity="center"
-                android:lineSpacingExtra="3dip"/>
+                android:text="https://"/>
+
     </LinearLayout>
 
     <!-- 하단 버튼 레이아웃 -->
@@ -71,7 +77,7 @@
                 android:textSize="13.5dp"
                 android:background="@drawable/dialog_negative_back"
                 android:textAllCaps="false"
-                android:textColor="@color/defaultWhite"
+                android:textColor="#000000"
                 android:text="@string/basic_cancel"/>
         <Button
                 android:id="@+id/btn_dialogPositive"
@@ -82,6 +88,6 @@
                 android:textColor="@color/defaultWhite"
                 android:background="@drawable/dialog_positive_back"
                 android:textAllCaps="false"
-                android:text="@string/basic_confirm"/>
+                android:text="@string/basic_save"/>
     </LinearLayout>
 </LinearLayout>

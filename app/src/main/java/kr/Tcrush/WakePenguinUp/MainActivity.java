@@ -102,12 +102,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static long time =0;
     @Override
     public void onBackPressed() {
-        if(new WebViewFragment().canGoback()){
-            new WebViewFragment().goBack();
-        }else{
-            if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-                mDrawerLayout.closeDrawer(drawerContainer);
-                startFloating(getBaseContext());
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(drawerContainer);
+            startFloating(getBaseContext());
+            if(new WebViewFragment().canGoback()){
+                new WebViewFragment().goBack();
             }else{
                 if(System.currentTimeMillis()-time>=2000){
                     time = System.currentTimeMillis();
@@ -125,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
         }
+
 
     }
 
@@ -436,8 +436,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private long shakeTime ;
-    private static final int SHAKE_SKIP_TIME = 500;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 5.4f;
+    private static final int SHAKE_SKIP_TIME = 1000;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 10f;
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {

@@ -3,11 +3,20 @@ package kr.Tcrush.WakePenguinUp.Tool;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,13 +32,16 @@ public class DialogManager  extends AlertDialog.Builder {
     // 확인, 취소 버튼 다이얼로그
     public static class positiveNegativeDialog extends Dialog {
         Context context;
-        TextView tv_dialogPositiveNagative_title;
-        TextView tv_dialogPositiveNagative_message;
+
+        FrameLayout fl_dialog_icon_background;
+        TextView tv_dialog_firstText;
+
+        EditText et_dialog_urlName;
+        EditText et_dialog_url;
+
         static Button btn_dialogPositive;
         static Button btn_dialogNagative;
 
-        String title;
-        String message;
 
         View.OnClickListener onClickListener;
         View.OnClickListener onNegativeClickListener;
@@ -37,21 +49,15 @@ public class DialogManager  extends AlertDialog.Builder {
         String deleteDialogText = null;
         String cancleDialogText = null;
 
-        EditText et_dialog_urlName, et_dialog_url;
+        String color ;
+        String url;
 
-        public positiveNegativeDialog(@NonNull Context context, String title, String message, View.OnClickListener onClickListener,View.OnClickListener onNegativeClickListener) {
+        public positiveNegativeDialog(@NonNull Context context,String color, String url ) {
             super(context);
 
             this.context = context;
-            this.title = title;
-            this.message = message;
-            this.onClickListener = onClickListener;
-            this.onNegativeClickListener = onNegativeClickListener;
-        }
-
-        public void changeBtnText(String deleteDialogText, String cancleDialogText){
-            this.deleteDialogText = deleteDialogText;
-            this.cancleDialogText = cancleDialogText;
+            this.color = color;
+            this.url = url;
 
         }
 
@@ -61,23 +67,73 @@ public class DialogManager  extends AlertDialog.Builder {
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.dialog_positive_negative);
 
-            et_dialog_url = findViewById(R.id.et_dialog_url);
-            et_dialog_urlName = findViewById(R.id.et_dialog_urlName);
+            fl_dialog_icon_background = findViewById(R.id.fl_dialog_icon_background);
+            tv_dialog_firstText = findViewById(R.id.tv_dialog_firstText);
+            tv_dialog_firstText.setText("바");
 
-            tv_dialogPositiveNagative_title = findViewById(R.id.tv_dialogPositiveNagative_title);
-            tv_dialogPositiveNagative_title.setText(title);
-            tv_dialogPositiveNagative_message = findViewById(R.id.tv_dialogPositiveNagative_message);
-            tv_dialogPositiveNagative_message.setText(message);
+            Drawable roundDrawable = context.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
+            roundDrawable.setColorFilter(Color.parseColor(color), PorterDuff.Mode.SRC_ATOP);
+            fl_dialog_icon_background.setBackground(roundDrawable);
+
+
+            et_dialog_urlName = findViewById(R.id.et_dialog_urlName);
+            et_dialog_url = findViewById(R.id.et_dialog_url);
+            et_dialog_url.setText(url);
+
+
+            et_dialog_urlName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    try{
+                        String inputName = String.valueOf(charSequence);
+                        if(inputName!=null && !inputName.equals("")){
+                            try{
+                                tv_dialog_firstText.setText(inputName.substring(0,1));
+                            }catch (Exception e){
+                                tv_dialog_firstText.setText("?");
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
 
             btn_dialogPositive = findViewById(R.id.btn_dialogPositive);
             btn_dialogPositive.setOnTouchListener(new DialogButtonClickEffect());
             if(onClickListener != null){
-                btn_dialogPositive.setOnClickListener(onClickListener);
+                btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String inputName = String.valueOf(et_dialog_urlName.getText());
+                        String inputUrl = String.valueOf(et_dialog_url.getText());
+                    }
+                });
             }
             btn_dialogNagative = findViewById(R.id.btn_dialogNagative);
             btn_dialogNagative.setOnTouchListener(new DialogButtonClickEffect());
             if(onNegativeClickListener != null){
-                btn_dialogNagative.setOnClickListener(onNegativeClickListener);
+                btn_dialogNagative.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dismiss();
+                    }
+                });
                 btn_dialogPositive.setText(deleteDialogText);
                 btn_dialogNagative.setText(cancleDialogText);
             }else {
@@ -91,6 +147,22 @@ public class DialogManager  extends AlertDialog.Builder {
                         }
                     }
                 });
+            }
+
+            Window window = getWindow();
+            if( window != null ) {
+                // 백그라운드 투명
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                WindowManager.LayoutParams params = window.getAttributes();
+                // 화면에 가득 차도록
+                params.width         = WindowManager.LayoutParams.MATCH_PARENT;
+                params.height        = WindowManager.LayoutParams.MATCH_PARENT;
+
+                // 열기&닫기 시 애니메이션 설정
+                params.windowAnimations = R.style.AnimationPopupStyle;
+                window.setAttributes( params );
+                window.setGravity( Gravity.BOTTOM );
             }
         }
     }

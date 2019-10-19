@@ -34,6 +34,7 @@ import im.delight.android.webview.AdvancedWebView;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.ChromeClientController;
+import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
@@ -230,6 +231,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         switch (view.getId()){
             case R.id.iv_star :
 
+                new DialogSupport().doDialog(getContext(),String.valueOf(et_url.getText()));
                 break;
         }
     }
