@@ -11,10 +11,10 @@
             android:id="@+id/rl_outfloatingLayout"
             android:layout_width="68dp"
             android:layout_height="68dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/background_floating">
         <LinearLayout
                 android:layout_width="match_parent"
@@ -31,15 +31,17 @@
                     android:layout_height="wrap_content"
                     android:text="3"
                     android:textSize="45dp"
+                    android:visibility="gone"
                     android:textStyle="bold" />
-
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/iv_floating_lock"
+                    android:src="@drawable/icon_lock_opened"
+                    android:visibility="visible"/>
 
         </LinearLayout>
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/iv_floating_lock"
-                android:visibility="gone"/>
+
 
     </RelativeLayout>
 
@@ -47,11 +49,12 @@
             android:id="@+id/fg_floating_count"
             android:layout_width="74dp"
             android:layout_height="74dp"
+            android:layout_margin="7dp"
             android:layout_centerHorizontal="true"
             app:gaugeEndValue="1000"
             app:gaugePointEndColor="#EE8733"
             app:gaugePointStartColor="#EE8733"
-            app:gaugeStartAngle="90"
+            app:gaugeStartAngle="270"
             app:gaugeStartValue="0"
             app:gaugeStrokeCap="ROUND"
             app:gaugeStrokeColor="#00ffffff"

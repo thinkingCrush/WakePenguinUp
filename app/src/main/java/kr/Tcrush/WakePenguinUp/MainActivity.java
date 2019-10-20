@@ -139,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        Dlog.e("test 1111");
         if(new SharedWPU().getNotFirstUser(getBaseContext())){
             startFloating(getBaseContext());
         }
@@ -446,8 +445,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private long shakeTime ;
-    private static final int SHAKE_SKIP_TIME = 800;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 8f;
+    private static final int SHAKE_SKIP_TIME = 600;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 6.5f;
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {

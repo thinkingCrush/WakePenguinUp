@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -67,44 +69,73 @@ public class FloatingViewController {
     public final int AnimationFloating = 5;
 
 
+    private static int gaugeValue = 0;
     public void initHandler(final Context context, final TextView tv_floating_count, LinearLayout ll_floating,
-                            final ImageView iv_floating_lock , FloatingGauge fg_outGauge, RelativeLayout rl_outfloatingLayout){
-        if(floatingHandler == null){
-            floatingHandler = new Handler(new Handler.Callback() {
-                @Override
-                public boolean handleMessage(@NonNull Message msg) {
-                    switch (msg.what){
-                        case CountFloating :
-                            break;
-                        case GaugeFloating :
-                            break;
-                        case ImageViewFloating :
-                            Dlog.e("test ImageViewFloating");
-                            iv_floating_lock.setVisibility(View.VISIBLE);
-                            iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_lock_closeed,null));
+                            final ImageView iv_floating_lock , final FloatingGauge fg_outGauge, final RelativeLayout rl_outfloatingLayout){
+        floatingHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(@NonNull Message msg) {
+                switch (msg.what){
+                    case CountFloating :
+                        break;
+                    case GaugeFloating :
+                        fg_outGauge.setValue(gaugeValue);
 
-                            break;
-                        case TextViewFloating :
-                            Dlog.e("test TextViewFloating");
-                            String count = String.valueOf(msg.obj);
-                            if(count.equals("0")){
-                                tv_floating_count.setVisibility(View.GONE);
-                            }else{
-                                iv_floating_lock.setVisibility(View.GONE);
-                                tv_floating_count.setVisibility(View.VISIBLE);
-                                tv_floating_count.setText(count);
+                        Timer timer = new Timer();
+                        timer.scheduleAtFixedRate(new TimerTask() {
+                            @Override
+                            public void run() {
+                                if(gaugeValue >1000){
+                                    gaugeValue = 0;
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            fg_outGauge.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    this.cancel();
+                                }else{
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            fg_outGauge.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                                    gaugeValue = gaugeValue+10;
+                                    fg_outGauge.setValue(gaugeValue);
+                                }
                             }
+                        },0,10);
+                        break;
+                    case ImageViewFloating :
+                        iv_floating_lock.setVisibility(View.VISIBLE);
+                        iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_lock_closeed,null));
 
-                            break;
-                        case AnimationFloating :
-                            //timer
-                            break;
+                        final Animation animTransTwits = AnimationUtils.loadAnimation(
+                                context,R.anim.animation_floating_lock);
+                        rl_outfloatingLayout.startAnimation(animTransTwits);
 
-                    }
-                    return true;
+
+                        break;
+                    case TextViewFloating :
+                        String count = String.valueOf(msg.obj);
+                        if(count.equals("0")){
+                            tv_floating_count.setVisibility(View.GONE);
+                        }else{
+                            iv_floating_lock.setVisibility(View.GONE);
+                            tv_floating_count.setVisibility(View.VISIBLE);
+                            tv_floating_count.setText(count);
+                        }
+
+                        break;
+                    case AnimationFloating :
+                        //timer
+                        break;
+
                 }
-            });
-        }
+                return true;
+            }
+        });
     }
 
 
@@ -112,7 +143,6 @@ public class FloatingViewController {
     private static Timer timer = null;
     private static int lockCount = 0;
     public void screenLock(final Context context){
-        Dlog.e("test 1111");
         try{
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -120,21 +150,23 @@ public class FloatingViewController {
                 public void run() {
                     try{
                         lockCount ++;
-                        Dlog.e("test 2222 : " +lockCount );
                         switch (lockCount){
                             case 1 :
                                 if(floatingHandler != null){
                                     floatingHandler.obtainMessage(TextViewFloating,"3").sendToTarget();
+                                    floatingHandler.obtainMessage(GaugeFloating,null).sendToTarget();
                                 }
                                 break;
                             case 2 :
                                 if(floatingHandler != null){
                                     floatingHandler.obtainMessage(TextViewFloating,"2").sendToTarget();
+                                    floatingHandler.obtainMessage(GaugeFloating,null).sendToTarget();
                                 }
                                 break;
                             case 3 :
                                 if(floatingHandler != null){
                                     floatingHandler.obtainMessage(TextViewFloating,"1").sendToTarget();
+                                    floatingHandler.obtainMessage(GaugeFloating,null).sendToTarget();
                                 }
                                 break;
                             case 4 :
@@ -143,7 +175,7 @@ public class FloatingViewController {
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                 }
                                 break;
-                            case 5 :
+                            case 7 :
                                 try{
                                     if(MainActivity.intent!=null && context != null){
                                         context.stopService(MainActivity.intent);

@@ -57,7 +57,7 @@ public class SharedWPU {
             SharedPreferences urlArray =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
             ArrayList<UrlArray> urlArrayList = new ArrayList<>();
 
-            String json = urlArray.getString(urlListKey, arrayToJson(Objects.requireNonNull(getDefaultArray())));
+            String json = urlArray.getString(urlListKey, null);
             if (json != null) {
                 try {
                     JSONArray a = new JSONArray(json);
@@ -76,6 +76,8 @@ public class SharedWPU {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }else{
+                return new ArrayList<UrlArray>();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -113,7 +115,7 @@ public class SharedWPU {
      *
      * */
 
-    private ArrayList<UrlArray> getDefaultArray (){
+    public ArrayList<UrlArray> getDefaultArray (){
         try{
             ArrayList<UrlArray> urlArrays = new ArrayList<>();
             urlArrays.add(new UrlArray("https://www.youtube.com/?gl=KR&hl=ko","유튜브","Y","#87cefa"));
