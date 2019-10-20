@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Data.UrlArrayManager;
+import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 
 public class DialogManager  extends AlertDialog.Builder {
@@ -64,10 +65,18 @@ public class DialogManager  extends AlertDialog.Builder {
         }
 
         @Override
+        public void onDetachedFromWindow() {
+            super.onDetachedFromWindow();
+            MainActivity.startFloating(context);
+        }
+
+        @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.dialog_positive_negative);
+
+            MainActivity.stopFloating(context);
 
             fl_dialog_icon_background = findViewById(R.id.fl_dialog_icon_background);
             tv_dialog_firstText = findViewById(R.id.tv_dialog_firstText);
@@ -135,6 +144,7 @@ public class DialogManager  extends AlertDialog.Builder {
 
                     new UrlArrayManager().setUrlArrayList(context,urlArrays);
 
+                    MainActivity.listRefresh(context);
                     dismiss();
                 }
             });
@@ -146,6 +156,8 @@ public class DialogManager  extends AlertDialog.Builder {
                     dismiss();
                 }
             });
+
+
 
             Window window = getWindow();
             if( window != null ) {

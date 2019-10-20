@@ -55,6 +55,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_webview,container,false);
+        MainActivity.setPageNum(PageNumber.WebViewFragment.ordinal());
         initView(view);
         initHandler();
 

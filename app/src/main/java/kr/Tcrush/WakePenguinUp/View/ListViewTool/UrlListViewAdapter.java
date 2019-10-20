@@ -9,24 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.R;
-import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 
-public class UrlListAdapter extends BaseAdapter{
+public class UrlListViewAdapter extends BaseAdapter {
 
     private LayoutInflater inflater = null;
     private ArrayList<UrlArray> urlListArrayList = null;
-    private ViewHolder viewHolder = null;
+    private UrlListViewAdapter.ViewHolder viewHolder = null;
 
     private Context mContext = null;
 
-    public UrlListAdapter(Context context , ArrayList<UrlArray> urlListArrayList){
+    public UrlListViewAdapter(Context context , ArrayList<UrlArray> urlListArrayList){
         this.mContext = context;
         this.inflater = LayoutInflater.from(context);
         this.urlListArrayList = urlListArrayList;
@@ -57,31 +56,38 @@ public class UrlListAdapter extends BaseAdapter{
         View v = convertview;
 
         if(v == null){
-            viewHolder = new ViewHolder();
-            v = inflater.inflate(R.layout.listitem_urllist, null);
-            viewHolder.fl_drawer_icon_background = v.findViewById(R.id.fl_drawer_icon_background);
-            viewHolder.tv_urlFirstText = v.findViewById(R.id.tv_urlFirstText);
-            viewHolder.tv_strAddressName = v.findViewById(R.id.tv_strAddressName);
-            viewHolder.ll_drawerList = v.findViewById(R.id.ll_drawerList);
+            viewHolder = new UrlListViewAdapter.ViewHolder();
+            v = inflater.inflate(R.layout.listitem_urllist_fragment, null);
+            viewHolder.iv_deleteIcon = v.findViewById(R.id.iv_deleteIcon);
+            viewHolder.fl_urlList_icon = v.findViewById(R.id.fl_urlList_icon);
+            viewHolder.tv_urlList_icon = v.findViewById(R.id.tv_urlList_icon);
+            viewHolder.tv_urllist_name = v.findViewById(R.id.tv_urllist_name);
+            viewHolder.iv_listDrag = v.findViewById(R.id.iv_listDrag);
 
 
             v.setTag(viewHolder);
 
         }else {
-            viewHolder = (ViewHolder)v.getTag();
+            viewHolder = (UrlListViewAdapter.ViewHolder)v.getTag();
         }
 
-        String strUrl = getItem(position).url;
-        String strUrlName = getItem(position).urlName;
-        String textBgColor = getItem(position).textBgColor;
-        String firstText = getItem(position).urlFirstText;
+        try{
+            String strUrl = getItem(position).url;
+            String strUrlName = getItem(position).urlName;
+            String textBgColor = getItem(position).textBgColor;
+            String firstText = getItem(position).urlFirstText;
 
-        viewHolder.tv_strAddressName.setText(String.valueOf(strUrlName));
-        Drawable roundDrawable = mContext.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
-        roundDrawable.setColorFilter(Color.parseColor(textBgColor), PorterDuff.Mode.SRC_ATOP);
-        viewHolder.fl_drawer_icon_background.setBackground(roundDrawable);
 
-        viewHolder.tv_urlFirstText.setText(firstText);
+            Drawable roundDrawable = mContext.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
+            roundDrawable.setColorFilter(Color.parseColor(textBgColor), PorterDuff.Mode.SRC_ATOP);
+            viewHolder.fl_urlList_icon.setBackground(roundDrawable);
+
+            viewHolder.tv_urlList_icon.setText(firstText);
+
+            viewHolder.tv_urllist_name.setText(strUrlName);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
 
@@ -111,11 +117,11 @@ public class UrlListAdapter extends BaseAdapter{
 
     class ViewHolder{
 
-        public LinearLayout ll_drawerList = null;
-
-        public FrameLayout fl_drawer_icon_background = null;
-        public TextView tv_strAddressName = null;
-        public TextView tv_urlFirstText = null;
+        public ImageView iv_deleteIcon = null;
+        public FrameLayout fl_urlList_icon =null;
+        public TextView tv_urlList_icon = null;
+        public TextView tv_urllist_name = null;
+        public ImageView iv_listDrag = null;
 
 
 
@@ -134,4 +140,3 @@ public class UrlListAdapter extends BaseAdapter{
         mContext = null;
     }
 }
-

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,9 +16,14 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
+import kr.Tcrush.WakePenguinUp.Data.UrlArray;
+import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListViewAdapter;
 
 public class UrlListFragment extends Fragment {
 
@@ -26,7 +32,8 @@ public class UrlListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_webview,container,false);
+        View view = inflater.inflate(R.layout.fragment_urllist,container,false);
+        MainActivity.setPageNum(PageNumber.UrlListFragment.ordinal());
         initView(view);
         initListView();
 
@@ -44,6 +51,11 @@ public class UrlListFragment extends Fragment {
     }
 
     private void initListView(){
+
+        ArrayList<UrlArray> urlArrays = new ArrayList<>();
+        urlArrays = new SharedWPU().getUrlArrayList(getContext());
+
+
         Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
         menu.addItem(new MenuItem.Builder().setWidth(90)//set Width
                 .setBackground(new ColorDrawable(Color.RED))// set background
@@ -92,6 +104,10 @@ public class UrlListFragment extends Fragment {
 
             }
         });
+
+
+        BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),new SharedWPU().getUrlArrayList(getContext()));
+        sd_urlEditList.setAdapter(urlArrayList);
 
     }
 

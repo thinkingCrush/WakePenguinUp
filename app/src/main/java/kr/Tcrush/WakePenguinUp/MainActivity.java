@@ -17,7 +17,10 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -47,6 +49,7 @@ import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 import kr.Tcrush.WakePenguinUp.View.HelpFragment;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListAdapter;
+import kr.Tcrush.WakePenguinUp.View.PageNumber;
 import kr.Tcrush.WakePenguinUp.View.UrlListFragment;
 import kr.Tcrush.WakePenguinUp.View.WebViewFragment;
 
@@ -78,9 +81,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * */
 
     static DrawerLayout mDrawerLayout;
-    SlideAndDragListView sd_listview;
+    static SlideAndDragListView sd_listview;
     static RelativeLayout drawerContainer;
-    TextView tv_sideListEdit ;
+    ImageView iv_sideListEdit ;
 
     public static Context mainContext;
 
@@ -98,31 +101,40 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-    protected static int pageNum;
     private static long time =0;
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+
+        if(mDrawerLayout.isDrawerOpen(drawerContainer)){
             mDrawerLayout.closeDrawer(drawerContainer);
             startFloating(getBaseContext());
-            if(new WebViewFragment().canGoback()){
-                new WebViewFragment().goBack();
-            }else{
-                if(System.currentTimeMillis()-time>=2000){
-                    time = System.currentTimeMillis();
-                    Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
 
-                }else if(System.currentTimeMillis() -time < 2000){
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finishAffinity();
-                            System.runFinalization();
-                            System.exit(0);
-                        }
-                    },300);
+        }else{
+            if(pageNumber== PageNumber.HelpFragment.ordinal()||
+                pageNumber == PageNumber.WebViewFragment.ordinal()){
+                if(new WebViewFragment().canGoback()){
+                    new WebViewFragment().goBack();
+                }else{
+                    if(System.currentTimeMillis()-time>=2000){
+                        time = System.currentTimeMillis();
+                        Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
+
+                    }else if(System.currentTimeMillis() -time < 2000){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finishAffinity();
+                                System.runFinalization();
+                                System.exit(0);
+                            }
+                        },300);
+                    }
                 }
+            }else if(pageNumber == PageNumber.UrlListFragment.ordinal()){
+                mainChangeMenu(new WebViewFragment());
+                startFloating(getBaseContext());
             }
+
         }
 
 
@@ -138,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static Intent intent ;
     public static boolean FloatingStart = false;
-    public void startFloating(Context context){
+    public static void startFloating(Context context){
         stopFloating(context);
         try{
             if(context != null){
@@ -186,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public void mainChageMenu(Fragment changeFragment){
+    public void mainChangeMenu(Fragment changeFragment){
         try{
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag("Fragment");
@@ -219,10 +231,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //도움말 먼저 보여줄 것인지 아닌지 보고 mainChangeMenu
         if(new SharedWPU().getNotFirstUser(context)){
             //한번 들어왔던 사람임
-            mainChageMenu(new WebViewFragment());
+            mainChangeMenu(new WebViewFragment());
         }else{
             //한번도 안들어온 사람
-            mainChageMenu(new HelpFragment());
+            mainChangeMenu(new HelpFragment());
         }
     }
 
@@ -252,46 +264,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
 
         drawerContainer = findViewById(R.id.drawerContainer);
-        tv_sideListEdit = findViewById(R.id.tv_sideListEdit);
-        tv_sideListEdit.setOnClickListener(new View.OnClickListener() {
+        iv_sideListEdit = findViewById(R.id.iv_sideListEdit);
+        iv_sideListEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDrawerLayout.closeDrawer(drawerContainer);mDrawerLayout.closeDrawer(drawerContainer);
-                mainChageMenu(new UrlListFragment());
+                mainChangeMenu(new UrlListFragment());
+                stopFloating(getBaseContext());
 
             }
         });
         initDrawerListView();
     }
 
+    private static BaseAdapter sideListAdapter ;
     private void initDrawerListView(){
-        Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
-        /*menu.addItem(new MenuItem.Builder().setWidth(90)//set Width
-                .setBackground(new ColorDrawable(Color.RED))// set background
-                .setText("One")//set text string
-                .setTextColor(Color.GRAY)//set text color
-                .setTextSize(20)//set text size
-                .setIcon(getResources().getDrawable(R.drawable.baseline_face_black_36,null))// set icon
-                .build());*/
+        Menu menu = new Menu(false, 0);
         menu.addItem(new MenuItem.Builder().setWidth(120)
-                .setBackground(new ColorDrawable(Color.BLACK))
-                .setDirection(MenuItem.DIRECTION_RIGHT)//set direction (default DIRECTION_LEFT)
-                .setText("수정")//set text string
-                .setTextColor(Color.GRAY)//set text color
-                .setTextSize(20)//set text size
-                .setIcon(getResources().getDrawable(R.drawable.baseline_favorite_black_36,null))// set icon
+                .setBackground(new ColorDrawable(Color.parseColor("#ffffff")))
                 .build());
-        menu.addItem(new MenuItem.Builder().setWidth(120)
-                .setBackground(new ColorDrawable(Color.BLACK))
-                .setDirection(MenuItem.DIRECTION_RIGHT)//set direction (default DIRECTION_LEFT)
-                .setText("삭제")//set text string
-                .setTextColor(Color.GRAY)//set text color
-                .setTextSize(20)//set text size
-                .setIcon(getResources().getDrawable(R.drawable.baseline_face_black_36,null))// set icon
-                .build());
+
         sd_listview.setMenu(menu);
 
-        sd_listview.setAdapter(new UrlListAdapter(getBaseContext(),new SharedWPU().getUrlArrayList(getBaseContext())));
+        sideListAdapter =new UrlListAdapter(getBaseContext(),new SharedWPU().getUrlArrayList(getBaseContext()));
+        sd_listview.setAdapter(sideListAdapter);
         sd_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -309,6 +305,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
     }
 
+
+    public static void listRefresh(Context context){
+        try{
+            Dlog.e("sideListAdapter : " + sideListAdapter);
+            if(sideListAdapter != null){
+                sideListAdapter =new UrlListAdapter(context,new SharedWPU().getUrlArrayList(context));
+                sideListAdapter.notifyDataSetChanged();
+                sd_listview.setAdapter(sideListAdapter);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     /**
@@ -475,5 +484,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+
+    private static int pageNumber = -1;
+    public static void setPageNum(int num){
+        pageNumber = num;
     }
 }
