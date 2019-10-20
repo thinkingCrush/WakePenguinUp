@@ -17,12 +17,10 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -107,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(mDrawerLayout.isDrawerOpen(drawerContainer)){
             mDrawerLayout.closeDrawer(drawerContainer);
-            startFloating(getBaseContext());
-
         }else{
             if(pageNumber== PageNumber.HelpFragment.ordinal()||
                 pageNumber == PageNumber.WebViewFragment.ordinal()){
@@ -132,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }else if(pageNumber == PageNumber.UrlListFragment.ordinal()){
                 mainChangeMenu(new WebViewFragment());
-                startFloating(getBaseContext());
+                //startFloating(getBaseContext());
             }
 
         }
@@ -143,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
+        Dlog.e("test 1111");
         if(new SharedWPU().getNotFirstUser(getBaseContext())){
             startFloating(getBaseContext());
         }
@@ -152,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static boolean FloatingStart = false;
     public static void startFloating(Context context){
         stopFloating(context);
+        Dlog.e("startFloating");
         try{
             if(context != null){
                 if(intent == null){
@@ -183,10 +181,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public static void stopFloating(Context context){
+        Dlog.e("stopFloating init ");
         try{
             if(intent != null){
-                Dlog.e("stopFloating!!!");
+
                 if(context != null){
+                    Dlog.e("stopFloating!!! STOP!!!");
                     context.stopService(intent);
                 }
 
@@ -254,7 +254,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
-                startFloating(mainContext);
+                if(pageNumber != PageNumber.UrlListFragment.ordinal()){
+                    startFloating(mainContext);
+                }
             }
 
             @Override
@@ -308,7 +310,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static void listRefresh(Context context){
         try{
-            Dlog.e("sideListAdapter : " + sideListAdapter);
             if(sideListAdapter != null){
                 sideListAdapter =new UrlListAdapter(context,new SharedWPU().getUrlArrayList(context));
                 sideListAdapter.notifyDataSetChanged();
@@ -445,8 +446,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private long shakeTime ;
-    private static final int SHAKE_SKIP_TIME = 1000;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 10f;
+    private static final int SHAKE_SKIP_TIME = 800;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 8f;
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {

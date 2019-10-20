@@ -2,7 +2,6 @@ package kr.Tcrush.WakePenguinUp.View;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -15,9 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,14 +24,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import im.delight.android.webview.AdvancedWebView;
+import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.ChromeClientController;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
-import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 
@@ -98,7 +95,16 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         wv_webview.setWebChromeClient(new ChromeClientController(getActivity()));
         wv_webview.setWebViewClient(new WebViewClient());
 
-        loadUrl("https://sports.news.naver.com/index.nhn");
+        ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
+        try{
+            if(urlArrays != null && !urlArrays.isEmpty()){
+                loadUrl(urlArrays.get(0).url);
+            }else{
+                //내용이 없음
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         ll_webToolbar = view.findViewById(R.id.ll_webToolbar);
 
@@ -223,6 +229,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 et_url.setText(url);
             }
         }catch (Exception e){
+            //URL 잘못됨
             e.printStackTrace();
         }
     }
@@ -232,7 +239,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         switch (view.getId()){
             case R.id.iv_star :
 
-                new DialogSupport().doDialog(getContext(),String.valueOf(et_url.getText()));
+                new DialogSupport().addItemDialog(getContext(),String.valueOf(et_url.getText()));
                 break;
         }
     }

@@ -1,5 +1,6 @@
 package kr.Tcrush.WakePenguinUp.View;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,12 +24,17 @@ import java.util.Objects;
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.DialogManager;
+import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
+import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListViewAdapter;
 
 public class UrlListFragment extends Fragment {
 
-    SlideAndDragListView sd_urlEditList;
+    static SlideAndDragListView sd_urlEditList;
+
+    ImageView iv_itemAdd;
 
     @Nullable
     @Override
@@ -41,50 +48,61 @@ public class UrlListFragment extends Fragment {
     }
 
     private void initView(View view){
-        /**
-         * 리스트 뷰 넣어야함
-         * */
 
         sd_urlEditList = view.findViewById(R.id.sd_urlEditList);
+        iv_itemAdd = view.findViewById(R.id.iv_itemAdd);
+        iv_itemAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DialogSupport().urlList_addItemDialog(getContext(),"https://");
+            }
+        });
 
 
     }
 
+    private static ArrayList<UrlArray> urlArrays = new ArrayList<>();
     private void initListView(){
 
-        ArrayList<UrlArray> urlArrays = new ArrayList<>();
+
         urlArrays = new SharedWPU().getUrlArrayList(getContext());
 
-
         Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
-        menu.addItem(new MenuItem.Builder().setWidth(90)//set Width
-                .setBackground(new ColorDrawable(Color.RED))// set background
-                .setText("One")//set text string
-                .setTextColor(Color.GRAY)//set text color
-                .setTextSize(20)//set text size
-                .setIcon(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.baseline_list_black_36,null))
+        menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 0
+                .setBackground(new ColorDrawable(Color.RED))
+                .setText("삭제")
+                .setTextColor(Color.WHITE)
+                .setTextSize(15)
+                .setDirection(MenuItem.DIRECTION_RIGHT)
                 .build());
-        menu.addItem(new MenuItem.Builder().setWidth(120)
-                .setBackground(new ColorDrawable(Color.BLACK))
-                .setDirection(MenuItem.DIRECTION_RIGHT)//set direction (default DIRECTION_LEFT)
-                .setIcon(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.baseline_face_black_36,null))
+        menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 1
+                .setBackground(new ColorDrawable(Color.GRAY))
+                .setText("수정")
+                .setTextColor(Color.WHITE)
+                .setTextSize(15)
+                .setDirection(MenuItem.DIRECTION_RIGHT)
                 .build());
+
         sd_urlEditList.setMenu(menu);
 
         sd_urlEditList.setOnMenuItemClickListener(new SlideAndDragListView.OnMenuItemClickListener() {
             @Override
             public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
+                Dlog.e("itemPosition : " + itemPosition + " , buttonPosition : " + buttonPosition);
                 switch (direction){
-                    case MenuItem.DIRECTION_LEFT :
-                        switch (buttonPosition){
-                            case 0:
-                                return Menu.ITEM_SCROLL_BACK ;
-                        }
-                        break;
                     case MenuItem.DIRECTION_RIGHT :
                         switch (buttonPosition){
-                            case 0 :
+                            case 0 : // 삭제
+                                urlArrays.remove(itemPosition);
+                                new SharedWPU().setUrlArrayList(getContext(),urlArrays);
+                                sd_urlEditList.deferNotifyDataSetChanged();
+                                BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
+                                sd_urlEditList.setAdapter(urlArrayList);
+                                MainActivity.listRefresh(getContext());
                                 return Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP ;
+                            case 1 : // 수정
+                                new DialogSupport().editItemDialog(getContext(),urlArrays,itemPosition);
+                                return Menu.ITEM_NOTHING;
                         }
                         break;
                         default:
@@ -105,10 +123,22 @@ public class UrlListFragment extends Fragment {
             }
         });
 
-
-        BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),new SharedWPU().getUrlArrayList(getContext()));
+        BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
         sd_urlEditList.setAdapter(urlArrayList);
 
+    }
+
+
+    public static void listRefresh(Context context){
+        try{
+            if(sd_urlEditList != null){
+                sd_urlEditList.deferNotifyDataSetChanged();
+                BaseAdapter urlArrayList = new UrlListViewAdapter(context,new SharedWPU().getUrlArrayList(context));
+                sd_urlEditList.setAdapter(urlArrayList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
