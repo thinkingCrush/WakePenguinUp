@@ -62,6 +62,7 @@ public class UrlListFragment extends Fragment {
     }
 
     private static ArrayList<UrlArray> urlArrays = new ArrayList<>();
+    private static UrlArray dragUrlArray = null;
     private void initListView(){
 
 
@@ -111,14 +112,39 @@ public class UrlListFragment extends Fragment {
                 return Menu.ITEM_NOTHING;
             }
         });
-        sd_urlEditList.setOnSlideListener(new SlideAndDragListView.OnSlideListener() {
+
+        sd_urlEditList.setOnDragDropListener(new SlideAndDragListView.OnDragDropListener() {
             @Override
-            public void onSlideOpen(View view, View parentView, int position, int direction) {
+            public void onDragViewStart(int beginPosition) {
+                try{
+                    dragUrlArray = urlArrays.get(beginPosition);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
             }
 
             @Override
-            public void onSlideClose(View view, View parentView, int position, int direction) {
+            public void onDragDropViewMoved(int fromPosition, int toPosition) {
+                try{
+                    UrlArray fromUrlArray = urlArrays.remove(fromPosition);
+                    urlArrays.add(toPosition,fromUrlArray);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onDragViewDown(int finalPosition) {
+                try{
+                    urlArrays.set(finalPosition,dragUrlArray);
+                    new SharedWPU().setUrlArrayList(getContext(),urlArrays);
+                    MainActivity.listRefresh(getContext());
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
             }
         });
