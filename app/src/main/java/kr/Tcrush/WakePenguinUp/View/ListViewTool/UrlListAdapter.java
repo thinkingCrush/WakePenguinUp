@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -63,6 +65,8 @@ public class UrlListAdapter extends BaseAdapter{
             viewHolder.tv_urlFirstText = v.findViewById(R.id.tv_urlFirstText);
             viewHolder.tv_strAddressName = v.findViewById(R.id.tv_strAddressName);
             viewHolder.ll_drawerList = v.findViewById(R.id.ll_drawerList);
+            Animation animation = AnimationUtils.loadAnimation(mContext,R.anim.animation_item_zoom_in);
+            viewHolder.ll_drawerList.startAnimation(animation);
 
 
             v.setTag(viewHolder);

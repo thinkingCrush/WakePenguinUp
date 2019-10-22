@@ -1,5 +1,6 @@
 package kr.Tcrush.WakePenguinUp.View;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -32,6 +33,7 @@ import kr.Tcrush.WakePenguinUp.Tool.DialogManager;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListViewAdapter;
 
 public class UrlListFragment extends Fragment {
@@ -55,6 +57,7 @@ public class UrlListFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initView(View view){
 
         sd_urlEditList = view.findViewById(R.id.sd_urlEditList);
@@ -65,6 +68,7 @@ public class UrlListFragment extends Fragment {
                 new DialogSupport().urlList_addItemDialog(getContext(),"https://");
             }
         });
+        iv_itemAdd.setOnTouchListener(new ViewClickEffect());
 
 
         rl_urlArray = view.findViewById(R.id.rl_urlArray);

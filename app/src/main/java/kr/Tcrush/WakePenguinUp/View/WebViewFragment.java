@@ -1,13 +1,11 @@
 package kr.Tcrush.WakePenguinUp.View;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +19,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,7 +38,7 @@ import kr.Tcrush.WakePenguinUp.Tool.ChromeClientController;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
-import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
+import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 
 public class WebViewFragment extends Fragment implements View.OnClickListener, AdvancedWebView.Listener {
     static EditText et_url;
@@ -57,6 +56,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     Handler viewHandler ;
 
     RelativeLayout rl_webview_error ;
+    ProgressBar pb_webProgressbar;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,6 +67,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
         return view;
     }
+    @SuppressLint("ClickableViewAccessibility")
     private void initView (View view){
         //TEST
         et_url=view.findViewById(R.id.et_url);
@@ -91,7 +92,9 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         });
 
         iv_star = view.findViewById(R.id.iv_star);
+        iv_star.setOnTouchListener(new ViewClickEffect());
         iv_list = view.findViewById(R.id.iv_list);
+        iv_list.setOnTouchListener(new ViewClickEffect());
         iv_noneWebView = view.findViewById(R.id.iv_noneWebView);
         rl_webview_error = view.findViewById(R.id.rl_webview_error);
         tv_error_message = view.findViewById(R.id.tv_error_message);
@@ -115,8 +118,24 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         WebViewClient mWebViewClient = new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
+                try{
+                    pb_webProgressbar.setVisibility(View.GONE);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 view.loadUrl("javascript:window.android.onUrlChange(window.location.href);");
             };
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                try{
+                    pb_webProgressbar.setVisibility(View.VISIBLE);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
         };
         wv_webview.setWebViewClient(mWebViewClient);
 
@@ -141,7 +160,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
         }
 
-        /*if(!MainActivity.FloatingStart){
+        /*if(!MainActivity.isFloating){
             try{
                 Context context = getContext();
                 if(context != null){
@@ -156,12 +175,13 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     }
 
                 }
-                MainActivity.FloatingStart = true;
+                MainActivity.isFloating = true;
             }catch (Exception e){
                 e.printStackTrace();
             }
         }*/
 
+        pb_webProgressbar = view.findViewById(R.id.pb_webProgressbar);
 
 
     }
@@ -369,12 +389,14 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-
+        Dlog.e("test 1111");
+        pb_webProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onPageFinished(String url) {
-
+        Dlog.e("test 2222");
+        pb_webProgressbar.setVisibility(View.GONE);
     }
 
     @Override

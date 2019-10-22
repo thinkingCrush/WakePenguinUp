@@ -1,5 +1,6 @@
 package kr.Tcrush.WakePenguinUp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -44,6 +45,7 @@ import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
+import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
 import kr.Tcrush.WakePenguinUp.View.HelpFragment;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListAdapter;
@@ -52,31 +54,6 @@ import kr.Tcrush.WakePenguinUp.View.UrlListFragment;
 import kr.Tcrush.WakePenguinUp.View.WebViewFragment;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-
-    /**
-     *
-     * 시작 시, 설명 페이지 2 개 에 우측넘어가면 우측 하단 아이콘 이나 버튼이 나오게 한다.
-     * 넘어가면 상단에 URL 넣을 수 있는 화면, 즐겨찾기, 설정, 아무거나 아이콘 샘플
-     * 하단에 플로팅버튼 움직이게 하고
-     * 스크롤 올리면 상단 툴바 없어짐
-     *
-     * 플로팅 버튼 클릭하면 눌림 효과 주고 프로그래스바로 시간초 보여주고
-     * 잠김있을때 진동이 온다
-     * 동영상 플레이어 중에는 잠겨야한다
-     *
-     * 흔들면 깨워지면서 플로팅버튼 다시 떠야함
-     *
-     * 즐겨찾기 화면 리스트에 좌우 슬라이드 기능
-     *
-     * 즐겨찾기 별표는 북마크 추가하는것처럼 추가한다.
-     * 사이드바(즐겨찾기목록)을 추가하여 클릭하면 사이드에서 튀어나오면서 즐겨찾기 목록이 나온다.
-     *
-     *
-     * 상단에는 별이랑 설정, 리스트 아이콘이 있고
-     * 도움말 예시 페이지 찾아보고.
-     *
-     *
-     * */
 
     static DrawerLayout mDrawerLayout;
     static SlideAndDragListView sd_listview;
@@ -144,24 +121,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public static Intent intent ;
-    public static boolean FloatingStart = false;
+    public static boolean isFloating = false;
     public static void startFloating(Context context){
-        Dlog.e("startFlaoting!!@!!@!");
-        stopFloating(context);
         Dlog.e("startFloating");
         try{
-            if(context != null){
-                if(intent == null){
-                    intent = new Intent(context, FloatingService.class);
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Objects.requireNonNull(context).startForegroundService(intent);
-                }else {
-                    Objects.requireNonNull(context).startService(intent);
-                }
+            if(!isFloating){
+                if(context != null){
+                    if(intent == null){
+                        intent = new Intent(context, FloatingService.class);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Objects.requireNonNull(context).startForegroundService(intent);
+                    }else {
+                        Objects.requireNonNull(context).startService(intent);
+                    }
 
+                }
+                isFloating = true;
             }
-            FloatingStart = true;
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -191,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             }
 
-            FloatingStart = false;
+            isFloating = false;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -237,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         sd_listview = findViewById(R.id.sd_listview);
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -266,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         drawerContainer = findViewById(R.id.drawerContainer);
         iv_sideListEdit = findViewById(R.id.iv_sideListEdit);
+        iv_sideListEdit.setOnTouchListener(new ViewClickEffect());
         iv_sideListEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
