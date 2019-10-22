@@ -50,10 +50,10 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
                 //현재 어떤 이미지를 보여주고 있는지 확인하고, 마지막 이미지 면 화면 넘겨야한다.
                 // 지금은 그냥 화면 넘기자
                 if(!lastPage){
-                    iv_help.setImageDrawable(getContext().getResources().getDrawable(R.drawable.sample_tutorial_2,null));
+                    iv_help.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_help_2,null));
                     lastPage = true;
                 }else{
-                    ((MainActivity) Objects.requireNonNull(getActivity())).mainChangeMenu(new WebViewFragment());
+                    ((MainActivity) Objects.requireNonNull(getActivity())).mainChangeMenu(new WebViewFragment(),null);
                 }
 
 

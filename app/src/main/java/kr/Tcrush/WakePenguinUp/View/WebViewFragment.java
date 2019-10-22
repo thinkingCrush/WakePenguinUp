@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +46,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     ImageView iv_star,iv_list;
     LinearLayout ll_webToolbar;
     static ImageView iv_noneWebView ;
+    TextView tv_error_message ;
 
 
     static AdvancedWebView wv_webview;
@@ -52,6 +55,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     InputMethodManager inputMethodManager;
 
     Handler viewHandler ;
+
+    RelativeLayout rl_webview_error ;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,6 +93,10 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         iv_star = view.findViewById(R.id.iv_star);
         iv_list = view.findViewById(R.id.iv_list);
         iv_noneWebView = view.findViewById(R.id.iv_noneWebView);
+        rl_webview_error = view.findViewById(R.id.rl_webview_error);
+        tv_error_message = view.findViewById(R.id.tv_error_message);
+
+        initImageViewHandler();
 
 
         iv_star.setOnClickListener(this);
@@ -114,12 +123,11 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
         try{
             if(urlArrays != null && !urlArrays.isEmpty()){
+                MainActivity.startFloating(getContext());
                 loadUrl(urlArrays.get(0).url);
             }else{
                 //내용이 없음
-                wv_webview.setVisibility(View.GONE);
-                iv_noneWebView.setVisibility(View.VISIBLE);
-                iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.sample_tutorial_1,null));
+                urlUnknownError();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -133,7 +141,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
         }
 
-        if(!MainActivity.FloatingStart){
+        /*if(!MainActivity.FloatingStart){
             try{
                 Context context = getContext();
                 if(context != null){
@@ -152,9 +160,74 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }*/
+
+
+
+    }
+
+    private static Handler viewImageHandler = null;
+    private final int WebViewFlag = 1;
+    private final int ImageUnknownFlag =2;
+    private final int ImageErrorFlag = 3;
+    private void initImageViewHandler(){
+        try{
+            viewImageHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(@NonNull Message msg) {
+
+                    switch (msg.what){
+                        case WebViewFlag :
+                            Dlog.e("test 1111 WebViewFlag");
+                            MainActivity.startFloating(MainActivity.mainContext);
+                            wv_webview.setVisibility(View.VISIBLE);
+                            rl_webview_error.setVisibility(View.GONE);
+                            tv_error_message.setVisibility(View.GONE);
+                            iv_noneWebView.setVisibility(View.GONE);
+                            break;
+                        case ImageUnknownFlag :
+                            Dlog.e("test 2222 ImageUnknownFlag");
+                            wv_webview.setVisibility(View.GONE);
+                            rl_webview_error.setVisibility(View.VISIBLE);
+                            tv_error_message.setVisibility(View.VISIBLE);
+                            iv_noneWebView.setVisibility(View.VISIBLE);
+                            iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_findfail_url,null));
+                            tv_error_message.setText("바로가기 항목이 비어있습니다.");
+                            break;
+                        case ImageErrorFlag :
+                            Dlog.e("test 3333 ImageErrorFlag");
+                            MainActivity.stopFloating(MainActivity.mainContext);
+                            wv_webview.setVisibility(View.GONE);
+                            rl_webview_error.setVisibility(View.VISIBLE);
+                            tv_error_message.setVisibility(View.VISIBLE);
+                            iv_noneWebView.setVisibility(View.VISIBLE);
+                            iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_unknown_url,null));
+                            tv_error_message.setText("URL 주소를 확인 해 주세요.");
+                            break;
+                    }
+
+                    return true;
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
         }
+    }
 
-
+    public void webViewVisible(){
+        if(viewImageHandler != null){
+            viewImageHandler.obtainMessage(WebViewFlag,null).sendToTarget();
+        }
+    }
+    public void urlUnknownError(){
+        if(viewImageHandler != null){
+            viewImageHandler.obtainMessage(ImageUnknownFlag,null).sendToTarget();
+        }
+    }
+    public void urlFindFailError(){
+        if(viewImageHandler != null){
+            viewImageHandler.obtainMessage(ImageErrorFlag,null).sendToTarget();
+        }
     }
 
     private String checkUrlText(String data){
@@ -329,13 +402,14 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         public void onUrlChange(String url) {
             try{
                 Dlog.e("url : " + url);
-                if(et_url!=null && !url.equals("about:blank")){
+                if(et_url!=null && !url.equals("about:blank")) {
                     et_url.setText(url);
-                    if(checkStar(url)){
-                        iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star,null));
-                    }else{
-                        iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star_off,null));
+                    if (checkStar(url)) {
+                        iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star, null));
+                    } else {
+                        iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star_off, null));
                     }
+                    webViewVisible();
                 }
 
             }catch (Exception e){

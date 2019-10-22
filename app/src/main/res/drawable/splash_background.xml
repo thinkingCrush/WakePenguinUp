@@ -4,7 +4,7 @@
     <item android:drawable="@android:color/white" />
 
     <item>
-        <bitmap android:src="@mipmap/icon_round"
+        <bitmap android:src="@drawable/img_pengiun"
                 android:gravity="center" />
     </item>
 

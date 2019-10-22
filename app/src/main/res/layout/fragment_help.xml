@@ -4,13 +4,14 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#ffffff">
 
     <ImageView
             android:id="@+id/iv_help"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/sample_tutorial_1"/>
+            android:src="@drawable/img_help_1"/>
 
     <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fb_help"

@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                 }
             }else if(pageNumber == PageNumber.UrlListFragment.ordinal()){
-                mainChangeMenu(new WebViewFragment());
+                mainChangeMenu(new WebViewFragment(),null);
                 //startFloating(getBaseContext());
             }
 
@@ -140,13 +140,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         super.onResume();
         if(new SharedWPU().getNotFirstUser(getBaseContext())){
-            startFloating(getBaseContext());
         }
     }
 
     public static Intent intent ;
     public static boolean FloatingStart = false;
     public static void startFloating(Context context){
+        Dlog.e("startFlaoting!!@!!@!");
         stopFloating(context);
         Dlog.e("startFloating");
         try{
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public void mainChangeMenu(Fragment changeFragment){
+    public void mainChangeMenu(Fragment changeFragment, String animation){
         try{
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag("Fragment");
@@ -230,10 +230,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //도움말 먼저 보여줄 것인지 아닌지 보고 mainChangeMenu
         if(new SharedWPU().getNotFirstUser(context)){
             //한번 들어왔던 사람임
-            mainChangeMenu(new WebViewFragment());
+            mainChangeMenu(new WebViewFragment(),null);
         }else{
             //한번도 안들어온 사람
-            mainChangeMenu(new HelpFragment());
+            mainChangeMenu(new HelpFragment(),null);
         }
     }
 
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View view) {
                 mDrawerLayout.closeDrawer(drawerContainer);mDrawerLayout.closeDrawer(drawerContainer);
-                mainChangeMenu(new UrlListFragment());
+                mainChangeMenu(new UrlListFragment(),"Right");
                 stopFloating(getBaseContext());
 
             }
@@ -310,9 +310,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static void listRefresh(Context context){
         try{
             if(sideListAdapter != null){
-                sideListAdapter =new UrlListAdapter(context,new SharedWPU().getUrlArrayList(context));
-                sideListAdapter.notifyDataSetChanged();
-                sd_listview.setAdapter(sideListAdapter);
+                ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(context);
+
+                if(urlArrays != null && !urlArrays.isEmpty()){
+                    sideListAdapter =new UrlListAdapter(context,new SharedWPU().getUrlArrayList(context));
+                    sideListAdapter.notifyDataSetChanged();
+                    sd_listview.setAdapter(sideListAdapter);
+                }else{
+
+                }
+
             }
         }catch (Exception e){
             e.printStackTrace();
