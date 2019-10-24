@@ -284,7 +284,7 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
     }
 
     private void initForgroundService(){
-        int smallIcon = R.mipmap.icon_round;
+        int smallIcon = R.drawable.icon_phone;
         try{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 

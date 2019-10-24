@@ -138,6 +138,7 @@ public class DialogManager  extends AlertDialog.Builder {
                 public void onClick(View view) {
                     String inputName = String.valueOf(et_dialog_urlName.getText());
                     String inputUrl = String.valueOf(et_dialog_url.getText());
+                    Dlog.e("inputName : " +  inputName + " , inputUrl: " + inputUrl);
                     String firstName = inputName.substring(0,1);
 
                     ArrayList<UrlArray> urlArrays = new ArrayList<>();
@@ -283,6 +284,7 @@ public class DialogManager  extends AlertDialog.Builder {
                 public void onClick(View view) {
                     String inputName = String.valueOf(et_dialog_urlName.getText());
                     String inputUrl = String.valueOf(et_dialog_url.getText());
+                    Dlog.e("inputName : " +  inputName + " , inputUrl: " + inputUrl);
                     String firstName = inputName.substring(0,1);
 
 
@@ -420,6 +422,7 @@ public class DialogManager  extends AlertDialog.Builder {
                 public void onClick(View view) {
                     String inputName = String.valueOf(et_dialog_urlName.getText());
                     String inputUrl = String.valueOf(et_dialog_url.getText());
+                    Dlog.e("inputName : " +  inputName + " , inputUrl: " + inputUrl);
                     String firstName = inputName.substring(0,1);
 
                     ArrayList<UrlArray> urlArrays = new ArrayList<>();

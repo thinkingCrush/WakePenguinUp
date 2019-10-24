@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -58,11 +59,24 @@ public class UrlListViewAdapter extends BaseAdapter {
         if(v == null){
             viewHolder = new UrlListViewAdapter.ViewHolder();
             v = inflater.inflate(R.layout.listitem_urllist_fragment, null);
-            viewHolder.iv_deleteIcon = v.findViewById(R.id.iv_deleteIcon);
+
             viewHolder.fl_urlList_icon = v.findViewById(R.id.fl_urlList_icon);
             viewHolder.tv_urlList_icon = v.findViewById(R.id.tv_urlList_icon);
             viewHolder.tv_urllist_name = v.findViewById(R.id.tv_urllist_name);
             viewHolder.iv_listDrag = v.findViewById(R.id.iv_listDrag);
+            viewHolder.iv_listDrag.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()){
+                        case MotionEvent.ACTION_DOWN :
+                            break;
+                        case MotionEvent.ACTION_UP :
+                            break;
+                    }
+                    return false;
+                }
+            });
+
 
 
             v.setTag(viewHolder);
@@ -117,7 +131,6 @@ public class UrlListViewAdapter extends BaseAdapter {
 
     class ViewHolder{
 
-        public ImageView iv_deleteIcon = null;
         public FrameLayout fl_urlList_icon =null;
         public TextView tv_urlList_icon = null;
         public TextView tv_urllist_name = null;

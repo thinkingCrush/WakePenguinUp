@@ -24,12 +24,10 @@ import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
-import kr.Tcrush.WakePenguinUp.Tool.DialogManager;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
@@ -82,104 +80,17 @@ public class UrlListFragment extends Fragment {
 
     private static ArrayList<UrlArray> urlArrays = new ArrayList<>();
     private static UrlArray dragUrlArray = null;
+    private static BaseAdapter urlArrayListAdapter;
     private void initListView(){
 
 
         urlArrays = new SharedWPU().getUrlArrayList(getContext());
 
         try{
-
+            setListView();
             if(urlArrays != null && !urlArrays.isEmpty()){
-                Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
-                menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 0
-                        .setBackground(new ColorDrawable(Color.RED))
-                        .setText("삭제")
-                        .setTextColor(Color.WHITE)
-                        .setTextSize(15)
-                        .setDirection(MenuItem.DIRECTION_RIGHT)
-                        .build());
-                menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 1
-                        .setBackground(new ColorDrawable(Color.GRAY))
-                        .setText("수정")
-                        .setTextColor(Color.WHITE)
-                        .setTextSize(15)
-                        .setDirection(MenuItem.DIRECTION_RIGHT)
-                        .build());
-
-                sd_urlEditList.setMenu(menu);
-
-                sd_urlEditList.setOnMenuItemClickListener(new SlideAndDragListView.OnMenuItemClickListener() {
-                    @Override
-                    public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
-                        Dlog.e("itemPosition : " + itemPosition + " , buttonPosition : " + buttonPosition);
-                        switch (direction){
-                            case MenuItem.DIRECTION_RIGHT :
-                                switch (buttonPosition){
-                                    case 0 : // 삭제
-                                        urlArrays.remove(itemPosition);
-                                        new SharedWPU().setUrlArrayList(getContext(),urlArrays);
-                                        MainActivity.listRefresh(getContext());
-                                        if(urlArrays != null && !urlArrays.isEmpty()){
-                                            listViewVisible();
-                                            sd_urlEditList.deferNotifyDataSetChanged();
-                                            BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
-                                            sd_urlEditList.setAdapter(urlArrayList);
-                                        }else{
-                                            listViewEmpty();
-                                        }
-
-
-                                        return Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP ;
-                                    case 1 : // 수정
-                                        new DialogSupport().editItemDialog(getContext(),urlArrays,itemPosition);
-                                        return Menu.ITEM_NOTHING;
-                                }
-                                break;
-                            default:
-                                return Menu.ITEM_NOTHING;
-                        }
-                        return Menu.ITEM_NOTHING;
-                    }
-                });
-
-                sd_urlEditList.setOnDragDropListener(new SlideAndDragListView.OnDragDropListener() {
-                    @Override
-                    public void onDragViewStart(int beginPosition) {
-                        try{
-                            dragUrlArray = urlArrays.get(beginPosition);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                    @Override
-                    public void onDragDropViewMoved(int fromPosition, int toPosition) {
-                        try{
-                            UrlArray fromUrlArray = urlArrays.remove(fromPosition);
-                            urlArrays.add(toPosition,fromUrlArray);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                    @Override
-                    public void onDragViewDown(int finalPosition) {
-                        try{
-                            urlArrays.set(finalPosition,dragUrlArray);
-                            new SharedWPU().setUrlArrayList(getContext(),urlArrays);
-                            MainActivity.listRefresh(getContext());
-
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                    }
-                });
-
-                BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
-                sd_urlEditList.setAdapter(urlArrayList);
+                urlArrayListAdapter = new UrlListViewAdapter(getContext(),urlArrays);
+                sd_urlEditList.setAdapter(urlArrayListAdapter);
                 listViewVisible();
             }else{
                 listViewEmpty();
@@ -197,9 +108,10 @@ public class UrlListFragment extends Fragment {
     public static void listRefresh(Context context){
         try{
             if(sd_urlEditList != null){
+
                 sd_urlEditList.deferNotifyDataSetChanged();
-                BaseAdapter urlArrayList = new UrlListViewAdapter(context,new SharedWPU().getUrlArrayList(context));
-                sd_urlEditList.setAdapter(urlArrayList);
+                urlArrayListAdapter = new UrlListViewAdapter(context,new SharedWPU().getUrlArrayList(context));
+                sd_urlEditList.setAdapter(urlArrayListAdapter);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -252,6 +164,108 @@ public class UrlListFragment extends Fragment {
     public void listViewEmpty(){
         if(viewImageHandler != null){
             viewImageHandler.obtainMessage(ListEmptyFlag,null).sendToTarget();
+        }
+    }
+
+
+    public static boolean DragImageClickFlag = false;
+    private void setListView(){
+        try{
+            Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
+            menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 0
+                    .setBackground(new ColorDrawable(Color.RED))
+                    .setText("삭제")
+                    .setTextColor(Color.WHITE)
+                    .setTextSize(15)
+                    .setDirection(MenuItem.DIRECTION_RIGHT)
+                    .build());
+            menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 1
+                    .setBackground(new ColorDrawable(Color.GRAY))
+                    .setText("수정")
+                    .setTextColor(Color.WHITE)
+                    .setTextSize(15)
+                    .setDirection(MenuItem.DIRECTION_RIGHT)
+                    .build());
+
+            sd_urlEditList.setMenu(menu);
+
+            sd_urlEditList.setOnMenuItemClickListener(new SlideAndDragListView.OnMenuItemClickListener() {
+                @Override
+                public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
+                    Dlog.e("itemPosition : " + itemPosition + " , buttonPosition : " + buttonPosition);
+                    switch (direction){
+                        case MenuItem.DIRECTION_RIGHT :
+                            switch (buttonPosition){
+                                case 0 : // 삭제
+                                    urlArrays.remove(itemPosition);
+                                    new SharedWPU().setUrlArrayList(getContext(),urlArrays);
+                                    MainActivity.listRefresh(getContext());
+                                    if(urlArrays != null && !urlArrays.isEmpty()){
+                                        listViewVisible();
+                                        sd_urlEditList.deferNotifyDataSetChanged();
+                                        BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
+                                        sd_urlEditList.setAdapter(urlArrayList);
+                                    }else{
+                                        listViewEmpty();
+                                    }
+
+
+                                    return Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP ;
+                                case 1 : // 수정
+                                    new DialogSupport().editItemDialog(getContext(),urlArrays,itemPosition);
+                                    return Menu.ITEM_NOTHING;
+                            }
+                            break;
+                        default:
+                            return Menu.ITEM_NOTHING;
+                    }
+                    return Menu.ITEM_NOTHING;
+                }
+            });
+
+
+            sd_urlEditList.setOnDragDropListener(new SlideAndDragListView.OnDragDropListener() {
+                @Override
+                public void onDragViewStart(int beginPosition) {
+                    try{
+                        dragUrlArray = urlArrays.get(beginPosition);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onDragDropViewMoved(int fromPosition, int toPosition) {
+                    try{
+                        UrlArray fromUrlArray = urlArrays.remove(fromPosition);
+                        urlArrays.add(toPosition,fromUrlArray);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onDragViewDown(int finalPosition) {
+                    try{
+                        urlArrays.set(finalPosition,dragUrlArray);
+                        new SharedWPU().setUrlArrayList(getContext(),urlArrays);
+                        //urlArrays = new SharedWPU().getUrlArrayList(getContext());
+                        MainActivity.listRefresh(getContext());
+                        //listRefresh(getContext());
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
