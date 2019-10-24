@@ -47,11 +47,11 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
     private int PREV_X, PREV_Y;
     private int MAX_X = -1, MAX_Y = -1;
 
-    FloatingGauge fg_outGauge;
-    TextView tv_floating_count;
-    LinearLayout ll_floating;
-    ImageView iv_floating_lock;
-    RelativeLayout rl_outFloatingLayout;
+    private static FloatingGauge fg_outGauge;
+    private static TextView tv_floating_count;
+    private static LinearLayout ll_floating;
+    private static ImageView iv_floating_lock;
+    private static RelativeLayout rl_outFloatingLayout;
 
     private static CoordinatorLayout out_coordinatorLayout;
     public static android.app.NotificationManager notification_Manager;
@@ -66,7 +66,6 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
     @Override
     public void onCreate() {
         super.onCreate();
-
         initCreate();
         initForgroundService();
     }
@@ -326,6 +325,7 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
                         .setContentText(getBaseContext().getResources().getString(R.string.service_title))
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(smallIcon).build();
+                Dlog.e("startForeground 2222");
                 startForeground(smallIcon,notification);
 
             }

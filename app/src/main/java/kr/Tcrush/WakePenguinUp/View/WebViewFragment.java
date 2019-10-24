@@ -148,7 +148,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
         try{
             if(urlArrays != null && !urlArrays.isEmpty()){
-                MainActivity.startFloating(getContext());
                 loadUrl(urlArrays.get(0).url);
             }else{
                 //내용이 없음
@@ -196,6 +195,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     }
 
+
+
     private static Handler viewImageHandler = null;
     private final int WebViewFlag = 1;
     private final int ImageUnknownFlag =2;
@@ -208,7 +209,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
                     switch (msg.what){
                         case WebViewFlag :
-                            Dlog.e("test 1111 WebViewFlag");
                             MainActivity.startFloating(MainActivity.mainContext);
                             wv_webview.setVisibility(View.VISIBLE);
                             rl_webview_error.setVisibility(View.GONE);
@@ -341,6 +341,16 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             e.printStackTrace();
         }
 
+        ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
+        try{
+            if(urlArrays != null && !urlArrays.isEmpty()) {
+                Dlog.e("test 3333");
+                MainActivity.startFloating(getContext());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -433,7 +443,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         @JavascriptInterface
         public void onUrlChange(String url) {
             try{
-                Dlog.e("url : " + url);
                 if(et_url!=null && !url.equals("about:blank")) {
                     et_url.setText(url);
                     if (checkStar(url)) {

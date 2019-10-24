@@ -68,6 +68,7 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
+            Dlog.e("test 1111");
             MainActivity.startFloating(context);
         }
 

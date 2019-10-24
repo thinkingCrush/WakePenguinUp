@@ -67,10 +67,13 @@ public class FloatingViewController {
     public final int ImageViewFloating = 3;
     public final int TextViewFloating = 4;
     public final int AnimationFloating = 5;
+    public final int UnTouchLockFloating = 6;
+    public final int GoneFloating = 7;
+    public final int VisibleFloating = 8;
 
 
     private static int gaugeValue = 0;
-    public void initHandler(final Context context, final TextView tv_floating_count, LinearLayout ll_floating,
+    public void initHandler(final Context context, final TextView tv_floating_count, final LinearLayout ll_floating,
                             final ImageView iv_floating_lock , final FloatingGauge fg_outGauge, final RelativeLayout rl_outfloatingLayout){
         floatingHandler = new Handler(new Handler.Callback() {
             @Override
@@ -121,6 +124,7 @@ public class FloatingViewController {
                         String count = String.valueOf(msg.obj);
                         if(count.equals("0")){
                             tv_floating_count.setVisibility(View.GONE);
+                            fg_outGauge.setVisibility(View.GONE);
                         }else{
                             iv_floating_lock.setVisibility(View.GONE);
                             tv_floating_count.setVisibility(View.VISIBLE);
@@ -130,6 +134,28 @@ public class FloatingViewController {
                         break;
                     case AnimationFloating :
                         //timer
+                        break;
+
+                    case UnTouchLockFloating :
+                        final Animation animTransTwits2 = AnimationUtils.loadAnimation(
+                                context,R.anim.animation_floating_lock);
+                        rl_outfloatingLayout.startAnimation(animTransTwits2);
+                        break;
+
+                    case GoneFloating :
+                        Dlog.e("GoneFloating");
+                        iv_floating_lock.setVisibility(View.GONE);
+                        rl_outfloatingLayout.setVisibility(View.GONE);
+                        fg_outGauge.setVisibility(View.GONE);
+                        tv_floating_count.setVisibility(View.GONE);
+                        ll_floating.setVisibility(View.GONE);
+                        break;
+
+                    case VisibleFloating :
+                        Dlog.e("VisibleFloating");
+                        iv_floating_lock.setVisibility(View.VISIBLE);
+                        rl_outfloatingLayout.setVisibility(View.VISIBLE);
+                        ll_floating.setVisibility(View.VISIBLE);
                         break;
 
                 }
@@ -204,6 +230,37 @@ public class FloatingViewController {
                 }
             },0,1000);
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void floatingGone(){
+        try{
+            if(floatingHandler!= null){
+                floatingHandler.obtainMessage(GoneFloating,null).sendToTarget();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void floatingVisible(){
+        try{
+            if(floatingHandler!= null){
+                floatingHandler.obtainMessage(VisibleFloating,null).sendToTarget();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void wakeUpAnimation(){
+        try{
+            if(floatingHandler!= null){
+                floatingHandler.obtainMessage(UnTouchLockFloating,null).sendToTarget();
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

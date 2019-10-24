@@ -54,6 +54,7 @@ import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
+import kr.Tcrush.WakePenguinUp.View.Floating.FloatingViewController;
 import kr.Tcrush.WakePenguinUp.View.HelpFragment;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListAdapter;
 import kr.Tcrush.WakePenguinUp.View.PageNumber;
@@ -130,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static Intent intent ;
     public static boolean isFloating = false;
     public static void startFloating(Context context){
-        Dlog.e("startFloating");
         try{
             if(!isFloating){
                 if(context != null){
@@ -155,13 +155,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopFloating(getBaseContext());
+        stopFloating(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopFloating(getBaseContext());
+        stopFloating(this);
     }
 
     public static void stopFloating(Context context){
@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if(pageNumber != PageNumber.UrlListFragment.ordinal()){
+                    Dlog.e("test 2222");
                     startFloating(mainContext);
                 }
             }
@@ -365,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Dlog.e("touch Lock");
             TouchLockFlag = true;
             registerTouch();
-            stopFloating(getBaseContext());
+            new FloatingViewController().floatingGone();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -377,7 +378,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Dlog.e("touch Un Lock");
             TouchLockFlag = false;
             unRegisterTouch();
-            startFloating(context);
+            new FloatingViewController().floatingVisible();
+            new FloatingViewController().wakeUpAnimation();
         }catch (Exception e){
             e.printStackTrace();
         }
