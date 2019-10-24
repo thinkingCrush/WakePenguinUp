@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,6 +27,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -57,6 +61,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     RelativeLayout rl_webview_error ;
     ProgressBar pb_webProgressbar;
+
+    ImageView iv_gifImage;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -182,6 +188,10 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }*/
 
         pb_webProgressbar = view.findViewById(R.id.pb_webProgressbar);
+
+        iv_gifImage = view.findViewById(R.id.iv_gifImage);
+
+
 
 
     }
@@ -438,5 +448,29 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 e.printStackTrace();
             }
         }
+    }
+
+
+
+    public void startGif(int drawable){
+        try{
+            iv_gifImage.setVisibility(View.VISIBLE);
+            final GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(iv_gifImage);
+            Glide.with(getContext()).load(drawable).into(gifImage);
+            //5초뒤에 없애야함.
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.clear(gifImage);
+                    iv_gifImage.setVisibility(View.GONE);
+                }
+            },5000);
+        }catch (Exception e){
+            if(iv_gifImage!=null){
+                iv_gifImage.setVisibility(View.GONE);
+            }
+            e.printStackTrace();
+        }
+
     }
 }

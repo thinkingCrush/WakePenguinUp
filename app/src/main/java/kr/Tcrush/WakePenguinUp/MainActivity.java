@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,11 +19,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -273,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 try{
+
                     view.setBackgroundColor(Color.parseColor("#ffffff"));
                     ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getBaseContext());
                     UrlArray urlArray = urlArrays.get(position);
@@ -283,7 +291,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
 
             }
+
+
         });
+
+
     }
 
 

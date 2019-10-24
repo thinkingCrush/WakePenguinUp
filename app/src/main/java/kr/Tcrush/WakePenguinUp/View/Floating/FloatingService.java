@@ -15,6 +15,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.Gravity;
@@ -112,8 +113,29 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
                         PixelFormat.TRANSLUCENT);
             }
             mParams.gravity = Gravity.LEFT | Gravity.TOP;
-            int settingX = settingXY.getInt("settingX",50);
-            int settingY = settingXY.getInt("settingY",200);
+
+            int settingX = settingXY.getInt("settingX",-1);
+            int settingY = settingXY.getInt("settingY",-1);
+            if(settingX==-1 && settingY==-1){
+                try{
+                    WindowManager window = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                    Display display = null;
+                    if (window != null) {
+                        display = window.getDefaultDisplay();
+                        Point size = new Point();
+                        display.getSize(size);
+                        DisplayMetrics displayMetrics = new DisplayMetrics();
+                        display.getMetrics(displayMetrics);
+                        settingX = ((size.x/2)-(dpToPx(getBaseContext(),88)/2));
+                        settingY = (int) (size.y-(dpToPx(getBaseContext(),88)*1.2));
+                    }
+                }catch (Exception e){
+                    settingX = 50;
+                    settingY = 200;
+                    e.printStackTrace();
+                }
+
+            }
             mParams.x = settingX;
             mParams.y = settingY;
 
@@ -126,6 +148,17 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
             e.printStackTrace();
         }
     }
+
+    public int dpToPx(Context context, float dp){
+        try{
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,dp,context.getResources().getDisplayMetrics());
+            return px;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return 100;
+    }
+
 
     @Override
     public void onDestroy() {

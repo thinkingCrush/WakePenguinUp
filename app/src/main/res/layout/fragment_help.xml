@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:fab="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff">
 
-    <ImageView
+    <!--<ImageView
             android:id="@+id/iv_help"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/img_help_1"/>
+            android:src="@drawable/img_help_1"/>-->
+    <view
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class = "androidx.viewpager.widget.ViewPager"
+            android:id="@+id/vp_imageView"
+            android:gravity="center"/>
 
     <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fb_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_marginBottom="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/icon_penguin"
             fab:fab_colorNormal="@color/blank"
             fab:fab_colorPressed="@color/blank"
             fab:fab_colorRipple="@color/blank"
-
+            android:visibility="gone"
             tools:ignore="RtlHardcoded" />
 
+    <me.relex.circleindicator.CircleIndicator
+            android:id="@+id/ci_help"
+            app:ci_drawable="@drawable/indicator_back"
+            app:ci_height="7dp"
+            app:ci_width="7dp"
+            app:ci_margin="4dp"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_height="48dp"/>
 
-</FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

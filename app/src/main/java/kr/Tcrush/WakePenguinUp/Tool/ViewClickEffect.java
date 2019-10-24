@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,8 +20,8 @@ public class ViewClickEffect implements View.OnTouchListener {
         try {
             switch (event.getAction()){
                 case MotionEvent.ACTION_DOWN :
-                    v.setScaleX(0.95f);
-                    v.setScaleY(0.95f);
+                    v.setScaleX(0.92f);
+                    v.setScaleY(0.92f);
                     if (v instanceof ImageView){
                         drawable = ((ImageView)v).getDrawable();
                         drawable.setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
@@ -32,9 +33,9 @@ public class ViewClickEffect implements View.OnTouchListener {
                     }else if(v instanceof TextView){
                         textColor = ((TextView)v).getCurrentTextColor();
                         ((TextView)v).setTextColor(((textColor & 0x00FFFFFF) | 0x77000000));
-                    }else if (v instanceof RelativeLayout){
+                    }else if (v instanceof LinearLayout){
                         if(v.getBackground() != null){
-                            v.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                            v.getBackground().setColorFilter(0xffffffff, PorterDuff.Mode.SRC_ATOP);
                         }
 
                     }
@@ -57,9 +58,13 @@ public class ViewClickEffect implements View.OnTouchListener {
                         if(v.getBackground() != null){
                             v.getBackground().clearColorFilter();
                         }
-
+                    }else if (v instanceof LinearLayout){
+                        if(v.getBackground() != null){
+                            v.getBackground().clearColorFilter();
+                        }
                     }
                     break;
+
             }
         }catch (Exception e){
             e.printStackTrace();

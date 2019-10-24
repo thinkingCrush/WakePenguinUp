@@ -29,6 +29,7 @@
                     android:textSize="15dp"
                     android:selectAllOnFocus="true"
                     android:textColorHighlight="#E4E3E3"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/et_border_url"/>
             <LinearLayout
                     android:layout_width="0dp"
@@ -121,6 +122,14 @@
                 android:layout_height="match_parent"/>-->
 
     </LinearLayout>
+
+    <ImageView
+            android:id="@+id/iv_gifImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:visibility="gone"
+            android:layout_marginRight="10dp"/>
 
 
 

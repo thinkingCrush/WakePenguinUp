@@ -34,6 +34,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.yydcdut:sdlv:0.7.6'
+    implementation 'me.relex:circleindicator:1.2.2'
+    implementation 'com.github.bumptech.glide:glide:3.8.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

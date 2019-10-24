@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.R;
-import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 
 public class UrlListAdapter extends BaseAdapter{
 
@@ -26,10 +25,10 @@ public class UrlListAdapter extends BaseAdapter{
     private ArrayList<UrlArray> urlListArrayList = null;
     private ViewHolder viewHolder = null;
 
-    private Context mContext = null;
+    private Context context = null;
 
     public UrlListAdapter(Context context , ArrayList<UrlArray> urlListArrayList){
-        this.mContext = context;
+        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.urlListArrayList = urlListArrayList;
     }
@@ -65,9 +64,8 @@ public class UrlListAdapter extends BaseAdapter{
             viewHolder.tv_urlFirstText = v.findViewById(R.id.tv_urlFirstText);
             viewHolder.tv_strAddressName = v.findViewById(R.id.tv_strAddressName);
             viewHolder.ll_drawerList = v.findViewById(R.id.ll_drawerList);
-            Animation animation = AnimationUtils.loadAnimation(mContext,R.anim.animation_item_zoom_in);
+            Animation animation = AnimationUtils.loadAnimation(context,R.anim.animation_item_zoom_in);
             viewHolder.ll_drawerList.startAnimation(animation);
-
 
             v.setTag(viewHolder);
 
@@ -81,7 +79,7 @@ public class UrlListAdapter extends BaseAdapter{
         String firstText = getItem(position).urlFirstText;
 
         viewHolder.tv_strAddressName.setText(String.valueOf(strUrlName));
-        Drawable roundDrawable = mContext.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
+        Drawable roundDrawable = context.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
         roundDrawable.setColorFilter(Color.parseColor(textBgColor), PorterDuff.Mode.SRC_ATOP);
         viewHolder.fl_drawer_icon_background.setBackground(roundDrawable);
 
@@ -135,7 +133,7 @@ public class UrlListAdapter extends BaseAdapter{
         inflater = null;
         urlListArrayList = null;
         viewHolder = null;
-        mContext = null;
+        context = null;
     }
 }
 
