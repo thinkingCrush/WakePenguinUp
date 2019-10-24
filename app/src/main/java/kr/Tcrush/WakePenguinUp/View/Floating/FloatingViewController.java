@@ -153,6 +153,7 @@ public class FloatingViewController {
                         switch (lockCount){
                             case 1 :
                                 if(floatingHandler != null){
+
                                     floatingHandler.obtainMessage(TextViewFloating,"3").sendToTarget();
                                     floatingHandler.obtainMessage(GaugeFloating,null).sendToTarget();
                                 }
@@ -171,6 +172,7 @@ public class FloatingViewController {
                                 break;
                             case 4 :
                                 if(floatingHandler != null){
+                                    new VibratorSupport().doVibrator(context);
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                 }
@@ -183,7 +185,6 @@ public class FloatingViewController {
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
-                                new VibratorSupport().doVibrator(context);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {

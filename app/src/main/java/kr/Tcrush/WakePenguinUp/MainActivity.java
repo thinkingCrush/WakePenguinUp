@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private long shakeTime ;
     private static final int SHAKE_SKIP_TIME = 600;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 6.5f;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 6.8f;
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
