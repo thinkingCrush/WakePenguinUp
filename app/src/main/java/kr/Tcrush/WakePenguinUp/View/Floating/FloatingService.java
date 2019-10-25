@@ -198,11 +198,24 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
 
     }
 
+    private static boolean FloatingClicked = false;
+    public static void setFloatingClicked (boolean clicked){
+        FloatingClicked = clicked;
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.rl_outfloatingLayout :
-                new FloatingViewController().screenLock(getBaseContext());
+                Dlog.e("Click!!!!!");
+                if(!FloatingClicked){
+                    new FloatingViewController().screenLock(getBaseContext());
+                    setFloatingClicked(true);
+                }else{
+                    //취소
+                    setFloatingClicked(false);
+                    new FloatingViewController().screenLockCancel();
+                }
+
                 break;
         }
     }
@@ -255,7 +268,6 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
                     if(rl_outFloatingLayout != null){
                         rl_outFloatingLayout.setPressed(false);
                     }
-
                 }catch (Exception e){
                     e.printStackTrace();
                 }

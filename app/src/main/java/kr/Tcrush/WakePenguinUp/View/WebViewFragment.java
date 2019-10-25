@@ -62,7 +62,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     RelativeLayout rl_webview_error ;
     ProgressBar pb_webProgressbar;
 
-    ImageView iv_gifImage;
+    static ImageView iv_gifImage;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -461,19 +461,24 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
 
 
-    public void startGif(int drawable){
+    public static void startGif(final Context context,final int drawable){
         try{
-            iv_gifImage.setVisibility(View.VISIBLE);
-            final GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(iv_gifImage);
-            Glide.with(getContext()).load(drawable).into(gifImage);
-            //5초뒤에 없애야함.
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    Glide.clear(gifImage);
-                    iv_gifImage.setVisibility(View.GONE);
+                    iv_gifImage.setVisibility(View.VISIBLE);
+                    final GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(iv_gifImage);
+                    Glide.with(context).load(drawable).into(gifImage);
+                    //5초뒤에 없애야함.
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Glide.clear(gifImage);
+                            iv_gifImage.setVisibility(View.GONE);
+                        }
+                    },5000);
                 }
-            },5000);
+            });
         }catch (Exception e){
             if(iv_gifImage!=null){
                 iv_gifImage.setVisibility(View.GONE);

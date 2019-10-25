@@ -380,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             unRegisterTouch();
             new FloatingViewController().floatingVisible();
             new FloatingViewController().wakeUpAnimation();
+            WebViewFragment.startGif(context,R.drawable.gif_lock);
         }catch (Exception e){
             e.printStackTrace();
         }

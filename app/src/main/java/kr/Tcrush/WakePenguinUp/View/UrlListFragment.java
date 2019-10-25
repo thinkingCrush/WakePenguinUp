@@ -107,11 +107,18 @@ public class UrlListFragment extends Fragment {
 
     public static void listRefresh(Context context){
         try{
+            Dlog.e("test 1111");
             if(sd_urlEditList != null){
-
-                sd_urlEditList.deferNotifyDataSetChanged();
-                urlArrayListAdapter = new UrlListViewAdapter(context,new SharedWPU().getUrlArrayList(context));
-                sd_urlEditList.setAdapter(urlArrayListAdapter);
+                Dlog.e("test 2222");
+                ArrayList<UrlArray> urlArrays =new SharedWPU().getUrlArrayList(context);
+                if(urlArrays != null && !urlArrays.isEmpty()){
+                    sd_urlEditList.deferNotifyDataSetChanged();
+                    urlArrayListAdapter = new UrlListViewAdapter(context,urlArrays);
+                    sd_urlEditList.setAdapter(urlArrayListAdapter);
+                    listViewVisible();
+                }else{
+                    listViewEmpty();
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -121,8 +128,8 @@ public class UrlListFragment extends Fragment {
 
 
     private static Handler viewImageHandler = null;
-    private final int ListViewFlag = 1;
-    private final int ListEmptyFlag = 2;
+    private static final int ListViewFlag = 1;
+    private static final int ListEmptyFlag = 2;
     private void initImageViewHandler(){
         try{
             viewImageHandler = new Handler(new Handler.Callback() {
@@ -156,19 +163,18 @@ public class UrlListFragment extends Fragment {
         }
     }
 
-    public void listViewVisible(){
+    public static void listViewVisible(){
         if(viewImageHandler != null){
             viewImageHandler.obtainMessage(ListViewFlag,null).sendToTarget();
         }
     }
-    public void listViewEmpty(){
+    public static void listViewEmpty(){
         if(viewImageHandler != null){
             viewImageHandler.obtainMessage(ListEmptyFlag,null).sendToTarget();
         }
     }
 
 
-    public static boolean DragImageClickFlag = false;
     private void setListView(){
         try{
             Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
@@ -251,9 +257,7 @@ public class UrlListFragment extends Fragment {
                     try{
                         urlArrays.set(finalPosition,dragUrlArray);
                         new SharedWPU().setUrlArrayList(getContext(),urlArrays);
-                        //urlArrays = new SharedWPU().getUrlArrayList(getContext());
                         MainActivity.listRefresh(getContext());
-                        //listRefresh(getContext());
 
 
                     }catch (Exception e){

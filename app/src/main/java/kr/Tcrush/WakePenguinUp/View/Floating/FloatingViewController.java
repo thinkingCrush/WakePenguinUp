@@ -21,6 +21,8 @@ import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
+import kr.Tcrush.WakePenguinUp.Tool.WebViewController;
+import kr.Tcrush.WakePenguinUp.View.WebViewFragment;
 
 public class FloatingViewController {
 
@@ -73,6 +75,7 @@ public class FloatingViewController {
 
 
     private static int gaugeValue = 0;
+    private static Timer gaugeTimer = null;
     public void initHandler(final Context context, final TextView tv_floating_count, final LinearLayout ll_floating,
                             final ImageView iv_floating_lock , final FloatingGauge fg_outGauge, final RelativeLayout rl_outfloatingLayout){
         floatingHandler = new Handler(new Handler.Callback() {
@@ -84,8 +87,8 @@ public class FloatingViewController {
                     case GaugeFloating :
                         fg_outGauge.setValue(gaugeValue);
 
-                        Timer timer = new Timer();
-                        timer.scheduleAtFixedRate(new TimerTask() {
+                        gaugeTimer = new Timer();
+                        gaugeTimer.scheduleAtFixedRate(new TimerTask() {
                             @Override
                             public void run() {
                                 if(gaugeValue >1000){
@@ -156,6 +159,8 @@ public class FloatingViewController {
                         iv_floating_lock.setVisibility(View.VISIBLE);
                         rl_outfloatingLayout.setVisibility(View.VISIBLE);
                         ll_floating.setVisibility(View.VISIBLE);
+                        fg_outGauge.setVisibility(View.GONE);
+                        tv_floating_count.setVisibility(View.GONE);
                         break;
 
                 }
@@ -204,20 +209,21 @@ public class FloatingViewController {
                                 }
                                 break;
                             case 7 :
-                                try{
+                                /*try{
                                     if(MainActivity.intent!=null && context != null){
                                         context.stopService(MainActivity.intent);
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
-                                }
+                                }*/
+                                WebViewFragment.startGif(context,R.drawable.gif_lock);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
                                         new MainActivity().touchLock();
                                     }
                                 });
-
+                                FloatingService.setFloatingClicked(false);
                                 this.cancel();
                                 lockCount  =0;
                                 break;
@@ -233,6 +239,28 @@ public class FloatingViewController {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void screenLockCancel(){
+        try{
+            if(floatingHandler != null){
+                floatingHandler.obtainMessage(VisibleFloating,null).sendToTarget();
+            }
+            lockCount = 0;
+            if(timer != null){
+                timer.purge();
+                timer.cancel();
+            }
+            gaugeValue =0;
+            if(gaugeTimer != null){
+                gaugeTimer.purge();
+                gaugeTimer.cancel();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 
