@@ -27,6 +27,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:textSize="32dp"
+                    android:textAllCaps="true"
                     android:textColor="#000000"
                     android:textStyle="bold"/>
 
@@ -51,6 +52,7 @@
                 android:hint="@string/basic_shortcuts_hint"
                 android:text="@string/basic_shortcuts"
                 android:textSize="20dp"
+                android:textCursorDrawable="@drawable/et_cursor_color_url"
                 android:layout_marginBottom="5dp"/>
         <EditText
                 android:id="@+id/et_dialog_url"
@@ -61,6 +63,7 @@
                 android:layout_marginRight="20dp"
                 android:hint="URL"
                 android:textSize="15dp"
+                android:textCursorDrawable="@drawable/et_cursor_color_url"
                 android:text="https://"/>
 
     </LinearLayout>

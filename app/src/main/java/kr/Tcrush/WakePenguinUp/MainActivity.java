@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -19,14 +17,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static DrawerLayout mDrawerLayout;
     static SlideAndDragListView sd_listview;
     static RelativeLayout drawerContainer;
+    static TextView tv_emptySide;
     ImageView iv_sideListEdit ;
 
     public static Context mainContext;
@@ -225,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         sd_listview = findViewById(R.id.sd_listview);
+        tv_emptySide = findViewById(R.id.tv_emptySide);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -304,13 +300,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         try{
             if(sideListAdapter != null){
                 ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(context);
-
                 if(urlArrays != null && !urlArrays.isEmpty()){
+                    checkSidebar(false);
                     sideListAdapter =new UrlListAdapter(context,new SharedWPU().getUrlArrayList(context));
                     sideListAdapter.notifyDataSetChanged();
                     sd_listview.setAdapter(sideListAdapter);
                 }else{
-
+                    checkSidebar(true);
                 }
 
             }
@@ -492,5 +488,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static int pageNumber = -1;
     public static void setPageNum(int num){
         pageNumber = num;
+    }
+
+
+    public static void checkSidebar(final boolean empty){
+        try{
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if(empty){
+                        sd_listview.setVisibility(View.GONE);
+                        tv_emptySide.setVisibility(View.VISIBLE);
+                    }else{
+                        sd_listview.setVisibility(View.VISIBLE);
+                        tv_emptySide.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

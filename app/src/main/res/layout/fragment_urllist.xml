@@ -52,7 +52,7 @@
         <com.yydcdut.sdlv.SlideAndDragListView
                 android:id="@+id/sd_urlEditList"
                 android:layout_width="match_parent"
-                android:listSelector="#55000000"
+                android:listSelector="#55B8B8B8"
                 android:layout_height="match_parent"
                 android:visibility="gone">
 

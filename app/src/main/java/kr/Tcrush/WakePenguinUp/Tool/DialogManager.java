@@ -430,6 +430,7 @@ public class DialogManager  extends AlertDialog.Builder {
                     new UrlArrayManager().setUrlArrayList(context,urlArrays);
                     MainActivity.listRefresh(context);
                     UrlListFragment.listRefresh(context);
+                    UrlListFragment.setUrlArrays(context);
                     dismiss();
                 }
             });

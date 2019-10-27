@@ -95,7 +95,7 @@ public class UrlListFragment extends Fragment {
                 sd_urlEditList.setAdapter(urlArrayListAdapter);
                 listViewVisible();
             }else{
-                listViewEmpty();
+                listViewEmpty(getContext());
             }
 
 
@@ -109,9 +109,7 @@ public class UrlListFragment extends Fragment {
 
     public static void listRefresh(Context context){
         try{
-            Dlog.e("test 1111");
             if(sd_urlEditList != null){
-                Dlog.e("test 2222");
                 ArrayList<UrlArray> urlArrays =new SharedWPU().getUrlArrayList(context);
                 if(urlArrays != null && !urlArrays.isEmpty()){
                     sd_urlEditList.deferNotifyDataSetChanged();
@@ -119,7 +117,7 @@ public class UrlListFragment extends Fragment {
                     sd_urlEditList.setAdapter(urlArrayListAdapter);
                     listViewVisible();
                 }else{
-                    listViewEmpty();
+                    listViewEmpty(context);
                 }
             }
         }catch (Exception e){
@@ -168,10 +166,11 @@ public class UrlListFragment extends Fragment {
             viewImageHandler.obtainMessage(ListViewFlag,null).sendToTarget();
         }
     }
-    public static void listViewEmpty(){
+    public static void listViewEmpty(Context context){
         if(viewImageHandler != null){
             viewImageHandler.obtainMessage(ListEmptyFlag,null).sendToTarget();
         }
+        MainActivity.listRefresh(context);
     }
 
 
@@ -212,7 +211,7 @@ public class UrlListFragment extends Fragment {
                                         BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
                                         sd_urlEditList.setAdapter(urlArrayList);
                                     }else{
-                                        listViewEmpty();
+                                        listViewEmpty(getContext());
                                     }
 
 
@@ -257,8 +256,8 @@ public class UrlListFragment extends Fragment {
                     try{
                         urlArrays.set(finalPosition,dragUrlArray);
                         new SharedWPU().setUrlArrayList(getContext(),urlArrays);
+                        Dlog.e("test 3333");
                         MainActivity.listRefresh(getContext());
-
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -268,6 +267,16 @@ public class UrlListFragment extends Fragment {
             });
 
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void setUrlArrays(Context context){
+        try{
+            urlArrays = new SharedWPU().getUrlArrayList(context);
+            urlArrayListAdapter = new UrlListViewAdapter(context,urlArrays);
+            sd_urlEditList.setAdapter(urlArrayListAdapter);
         }catch (Exception e){
             e.printStackTrace();
         }

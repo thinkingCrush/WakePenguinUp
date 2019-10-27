@@ -64,6 +64,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     ProgressBar pb_webProgressbar;
 
     static ImageView iv_gifImage;
+
+    static String lastPage;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -151,8 +153,12 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             if(urlArrays != null && !urlArrays.isEmpty()){
                 loadUrl(urlArrays.get(0).url);
             }else{
-                //내용이 없음
-                urlUnknownError();
+                if(lastPage != null ){
+                    loadUrl(lastPage);
+                }else{
+                    //내용이 없음
+                    urlUnknownError();
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -217,16 +223,15 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             iv_noneWebView.setVisibility(View.GONE);
                             break;
                         case ImageUnknownFlag :
-                            Dlog.e("test 2222 ImageUnknownFlag");
                             wv_webview.setVisibility(View.GONE);
                             rl_webview_error.setVisibility(View.VISIBLE);
                             tv_error_message.setVisibility(View.VISIBLE);
                             iv_noneWebView.setVisibility(View.VISIBLE);
                             iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_findfail_url,null));
                             tv_error_message.setText(getContext().getResources().getString(R.string.message_06));
+                            MainActivity.checkSidebar(true);
                             break;
                         case ImageErrorFlag :
-                            Dlog.e("test 3333 ImageErrorFlag");
                             MainActivity.stopFloating(MainActivity.mainContext);
                             wv_webview.setVisibility(View.GONE);
                             rl_webview_error.setVisibility(View.VISIBLE);
@@ -345,7 +350,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
         try{
             if(urlArrays != null && !urlArrays.isEmpty()) {
-                Dlog.e("test 3333");
                 MainActivity.startFloating(getContext());
             }
         }catch (Exception e){
@@ -362,6 +366,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 iv_noneWebView.setVisibility(View.GONE);
                 wv_webview.loadUrl(url);
                 et_url.setText(url);
+                lastPage = url;
+                webViewVisible();
             }
         }catch (Exception e){
             //URL 잘못됨
@@ -388,22 +394,25 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             String currentUrl = webViewUrl;
             if(currentUrl != null){
                 ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
-                for(UrlArray urlArray : urlArrays){
-                    String url = urlArray.url;
-                    currentUrl = currentUrl.replace("https://www.","");
-                    currentUrl = currentUrl.replace("http://www.","");
-                    currentUrl = currentUrl.replace("https://m.","");
-                    currentUrl = currentUrl.replace("http://m.","");
-                    url = url.replace("https://www.","");
-                    url = url.replace("http://www.","");
-                    url = url.replace("https://m.","");
-                    url = url.replace("http://m.","");
+                if(urlArrays!=null && !urlArrays.isEmpty()){
+                    for(UrlArray urlArray : urlArrays){
+                        String url = urlArray.url;
+                        currentUrl = currentUrl.replace("https://www.","");
+                        currentUrl = currentUrl.replace("http://www.","");
+                        currentUrl = currentUrl.replace("https://m.","");
+                        currentUrl = currentUrl.replace("http://m.","");
+                        url = url.replace("https://www.","");
+                        url = url.replace("http://www.","");
+                        url = url.replace("https://m.","");
+                        url = url.replace("http://m.","");
 
-                    Dlog.e("currentUrl : " + currentUrl + " , url : " + url);
-                    if(currentUrl.contains(url)||url.contains(currentUrl)){
-                        return true;
+                        Dlog.e("currentUrl : " + currentUrl + " , url : " + url);
+                        if(currentUrl.contains(url)||url.contains(currentUrl)){
+                            return true;
+                        }
                     }
                 }
+
             }else{
                 Dlog.e("currentUrl = null");
             }
@@ -415,13 +424,11 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        Dlog.e("test 1111");
         pb_webProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onPageFinished(String url) {
-        Dlog.e("test 2222");
         pb_webProgressbar.setVisibility(View.GONE);
     }
 
