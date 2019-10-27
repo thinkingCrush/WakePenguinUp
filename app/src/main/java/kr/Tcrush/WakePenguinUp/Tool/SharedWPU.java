@@ -118,8 +118,8 @@ public class SharedWPU {
     public ArrayList<UrlArray> getDefaultArray (){
         try{
             ArrayList<UrlArray> urlArrays = new ArrayList<>();
-            urlArrays.add(new UrlArray("https://www.youtube.com/?gl=KR&hl=ko","유튜브","Y","#87cefa"));
-            urlArrays.add(new UrlArray("https://www.naver.com/","네이버","N","#f44336"));
+            urlArrays.add(new UrlArray("https://www.youtube.com/","유튜브","Y","#f44336"));
+            urlArrays.add(new UrlArray("https://www.naver.com/","네이버","N","#00FF40"));
             urlArrays.add(new UrlArray("https://www.google.com/","구글","G","#3f51b5"));
             return urlArrays;
         }catch (Exception e){

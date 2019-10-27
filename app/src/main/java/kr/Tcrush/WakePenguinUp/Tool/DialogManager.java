@@ -279,6 +279,7 @@ public class DialogManager  extends AlertDialog.Builder {
 
 
             btn_dialogPositive = findViewById(R.id.btn_dialogPositive);
+            btn_dialogPositive.setText("수정");
             btn_dialogPositive.setOnTouchListener(new DialogButtonClickEffect());
             btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
                 @Override

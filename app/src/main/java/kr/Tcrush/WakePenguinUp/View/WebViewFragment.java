@@ -1,6 +1,7 @@
 package kr.Tcrush.WakePenguinUp.View;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -373,7 +374,11 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         switch (view.getId()){
             case R.id.iv_star :
 
-                new DialogSupport().addItemDialog(getContext(),String.valueOf(et_url.getText()));
+                if(checkStar(String.valueOf(et_url.getText()))){
+                    new DialogSupport().editItemDialog(getContext(),new SharedWPU().getUrlArrayList(getContext()),0);
+                }else{
+                    new DialogSupport().addItemDialog(getContext(),String.valueOf(et_url.getText()));
+                }
                 break;
         }
     }
@@ -394,6 +399,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     url = url.replace("https://m.","");
                     url = url.replace("http://m.","");
 
+                    Dlog.e("currentUrl : " + currentUrl + " , url : " + url);
                     if(currentUrl.contains(url)||url.contains(currentUrl)){
                         return true;
                     }

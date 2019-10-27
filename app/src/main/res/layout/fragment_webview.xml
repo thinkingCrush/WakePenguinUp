@@ -21,7 +21,7 @@
             <EditText
                     android:id="@+id/et_url"
                     android:layout_width="0dp"
-                    android:layout_weight="8"
+                    android:layout_weight="7"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="@drawable/et_cursor_color_url"
                     android:imeOptions="actionSearch"
@@ -29,7 +29,7 @@
                     android:textSize="15dp"
                     android:selectAllOnFocus="true"
                     android:textColorHighlight="#E4E3E3"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/et_border_url"/>
             <LinearLayout
                     android:layout_width="0dp"

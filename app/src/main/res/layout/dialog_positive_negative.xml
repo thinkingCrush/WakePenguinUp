@@ -27,6 +27,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:textSize="32dp"
+                    android:textColor="#000000"
                     android:textStyle="bold"/>
 
         </FrameLayout>
@@ -75,17 +76,19 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="13.5dp"
+                android:textSize="13dp"
                 android:background="@drawable/dialog_negative_back"
                 android:textAllCaps="false"
                 android:textColor="#000000"
+                android:textStyle="bold"
                 android:text="@string/basic_cancel"/>
         <Button
                 android:id="@+id/btn_dialogPositive"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="13.5dp"
+                android:textSize="13dp"
+                android:textStyle="bold"
                 android:textColor="@color/defaultWhite"
                 android:background="@drawable/dialog_positive_back"
                 android:textAllCaps="false"
