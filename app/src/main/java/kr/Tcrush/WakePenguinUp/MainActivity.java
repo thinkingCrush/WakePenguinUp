@@ -472,7 +472,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
                 shakeTime = currentTime;
                 shakeTime ++;
-                new VibratorSupport().doVibrator(mainContext);
+                new VibratorSupport().doVibrator(mainContext,300);
                 touchUnLock(mainContext);
             }
         }

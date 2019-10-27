@@ -68,7 +68,6 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
-            Dlog.e("test 1111");
             MainActivity.startFloating(context);
         }
 
@@ -82,7 +81,7 @@ public class DialogManager  extends AlertDialog.Builder {
 
             fl_dialog_icon_background = findViewById(R.id.fl_dialog_icon_background);
             tv_dialog_firstText = findViewById(R.id.tv_dialog_firstText);
-            tv_dialog_firstText.setText("바");
+            tv_dialog_firstText.setText(context.getResources().getString(R.string.init_shortcuts));
 
             Drawable roundDrawable = context.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
             roundDrawable.setColorFilter(Color.parseColor(color), PorterDuff.Mode.SRC_ATOP);
@@ -110,7 +109,7 @@ public class DialogManager  extends AlertDialog.Builder {
                             try{
                                 tv_dialog_firstText.setText(inputName.substring(0,1));
                             }catch (Exception e){
-                                tv_dialog_firstText.setText("바");
+                                tv_dialog_firstText.setText(context.getResources().getString(R.string.init_shortcuts));
                                 e.printStackTrace();
                             }
 
@@ -138,7 +137,6 @@ public class DialogManager  extends AlertDialog.Builder {
                 public void onClick(View view) {
                     String inputName = String.valueOf(et_dialog_urlName.getText());
                     String inputUrl = String.valueOf(et_dialog_url.getText());
-                    Dlog.e("inputName : " +  inputName + " , inputUrl: " + inputUrl);
                     String firstName = inputName.substring(0,1);
 
                     ArrayList<UrlArray> urlArrays = new ArrayList<>();
@@ -257,7 +255,7 @@ public class DialogManager  extends AlertDialog.Builder {
                             try{
                                 tv_dialog_firstText.setText(inputName.substring(0,1));
                             }catch (Exception e){
-                                tv_dialog_firstText.setText("바");
+                                tv_dialog_firstText.setText(context.getResources().getString(R.string.init_shortcuts));
                                 e.printStackTrace();
                             }
 
@@ -279,14 +277,13 @@ public class DialogManager  extends AlertDialog.Builder {
 
 
             btn_dialogPositive = findViewById(R.id.btn_dialogPositive);
-            btn_dialogPositive.setText("수정");
+            btn_dialogPositive.setText(context.getResources().getString(R.string.basic_edit));
             btn_dialogPositive.setOnTouchListener(new DialogButtonClickEffect());
             btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String inputName = String.valueOf(et_dialog_urlName.getText());
                     String inputUrl = String.valueOf(et_dialog_url.getText());
-                    Dlog.e("inputName : " +  inputName + " , inputUrl: " + inputUrl);
                     String firstName = inputName.substring(0,1);
 
 
@@ -368,7 +365,7 @@ public class DialogManager  extends AlertDialog.Builder {
 
             fl_dialog_icon_background = findViewById(R.id.fl_dialog_icon_background);
             tv_dialog_firstText = findViewById(R.id.tv_dialog_firstText);
-            tv_dialog_firstText.setText("바");
+            tv_dialog_firstText.setText(context.getResources().getString(R.string.init_shortcuts));
 
             Drawable roundDrawable = context.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
             roundDrawable.setColorFilter(Color.parseColor(color), PorterDuff.Mode.SRC_ATOP);
@@ -396,7 +393,7 @@ public class DialogManager  extends AlertDialog.Builder {
                             try{
                                 tv_dialog_firstText.setText(inputName.substring(0,1));
                             }catch (Exception e){
-                                tv_dialog_firstText.setText("바");
+                                tv_dialog_firstText.setText(context.getResources().getString(R.string.init_shortcuts));
                                 e.printStackTrace();
                             }
 
@@ -424,7 +421,6 @@ public class DialogManager  extends AlertDialog.Builder {
                 public void onClick(View view) {
                     String inputName = String.valueOf(et_dialog_urlName.getText());
                     String inputUrl = String.valueOf(et_dialog_url.getText());
-                    Dlog.e("inputName : " +  inputName + " , inputUrl: " + inputUrl);
                     String firstName = inputName.substring(0,1);
 
                     ArrayList<UrlArray> urlArrays = new ArrayList<>();

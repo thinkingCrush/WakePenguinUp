@@ -48,8 +48,8 @@
                 android:background="@drawable/et_border_url"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:hint="바로가기 이름"
-                android:text="바로가기"
+                android:hint="@string/basic_shortcuts_hint"
+                android:text="@string/basic_shortcuts"
                 android:textSize="20dp"
                 android:layout_marginBottom="5dp"/>
         <EditText

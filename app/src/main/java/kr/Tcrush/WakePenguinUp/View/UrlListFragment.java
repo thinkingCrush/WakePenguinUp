@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 import kr.Tcrush.WakePenguinUp.View.ListViewTool.UrlListViewAdapter;
 
@@ -138,20 +140,18 @@ public class UrlListFragment extends Fragment {
 
                     switch (msg.what){
                         case ListViewFlag :
-                            Dlog.e("test 1111 WebViewFlag");
                             sd_urlEditList.setVisibility(View.VISIBLE);
                             rl_urlArray.setVisibility(View.GONE);
                             tv_url_errorMessage.setVisibility(View.GONE);
                             iv_url_errorImage.setVisibility(View.GONE);
                             break;
                         case ListEmptyFlag :
-                            Dlog.e("test 2222 ImageUnknownFlag");
                             sd_urlEditList.setVisibility(View.GONE);
                             rl_urlArray.setVisibility(View.VISIBLE);
                             tv_url_errorMessage.setVisibility(View.VISIBLE);
                             iv_url_errorImage.setVisibility(View.VISIBLE);
                             iv_url_errorImage.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_unknown_url,null));
-                            tv_url_errorMessage.setText("오른쪽 추가 버튼을 클릭하여 바로가기를 등록해 주세요.");
+                            tv_url_errorMessage.setText(getContext().getResources().getString(R.string.message_02));
                             break;
                     }
 
@@ -180,14 +180,14 @@ public class UrlListFragment extends Fragment {
             Menu menu = new Menu(true, 0);//the first parameter is whether can slide over
             menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 0
                     .setBackground(new ColorDrawable(Color.RED))
-                    .setText("삭제")
+                    .setText(getContext().getResources().getString(R.string.basic_delete))
                     .setTextColor(Color.WHITE)
                     .setTextSize(15)
                     .setDirection(MenuItem.DIRECTION_RIGHT)
                     .build());
             menu.addItem(new MenuItem.Builder().setWidth(200) // buttonPosition : 1
                     .setBackground(new ColorDrawable(Color.GRAY))
-                    .setText("수정")
+                    .setText(getContext().getResources().getString(R.string.basic_edit))
                     .setTextColor(Color.WHITE)
                     .setTextSize(15)
                     .setDirection(MenuItem.DIRECTION_RIGHT)
@@ -229,12 +229,12 @@ public class UrlListFragment extends Fragment {
                 }
             });
 
-
             sd_urlEditList.setOnDragDropListener(new SlideAndDragListView.OnDragDropListener() {
                 @Override
                 public void onDragViewStart(int beginPosition) {
                     try{
                         dragUrlArray = urlArrays.get(beginPosition);
+
                     }catch (Exception e){
                         e.printStackTrace();
                     }

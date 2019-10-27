@@ -141,7 +141,7 @@ public class FloatingViewController {
 
                     case UnTouchLockFloating :
                         final Animation animTransTwits2 = AnimationUtils.loadAnimation(
-                                context,R.anim.animation_floating_lock);
+                                context,R.anim.animation_floating_unlock);
                         rl_outfloatingLayout.startAnimation(animTransTwits2);
                         break;
 
@@ -203,19 +203,12 @@ public class FloatingViewController {
                                 break;
                             case 4 :
                                 if(floatingHandler != null){
-                                    new VibratorSupport().doVibrator(context);
+                                    new VibratorSupport().doVibrator(context,300);
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                 }
                                 break;
-                            case 7 :
-                                /*try{
-                                    if(MainActivity.intent!=null && context != null){
-                                        context.stopService(MainActivity.intent);
-                                    }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }*/
+                            case 6 :
                                 WebViewFragment.startGif(context,R.drawable.gif_lock);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override

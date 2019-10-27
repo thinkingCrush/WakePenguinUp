@@ -106,7 +106,7 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
 
 
 
-        new SharedWPU().setUrlArrayList(getContext(),new SharedWPU().getDefaultArray());
+        new SharedWPU().setUrlArrayList(getContext(),new SharedWPU().getDefaultArray(getContext()));
         MainActivity.listRefresh(getContext());
 
         CircleIndicator indicator = view.findViewById(R.id.ci_help);

@@ -223,7 +223,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             tv_error_message.setVisibility(View.VISIBLE);
                             iv_noneWebView.setVisibility(View.VISIBLE);
                             iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_findfail_url,null));
-                            tv_error_message.setText("바로가기 항목이 비어있습니다.");
+                            tv_error_message.setText(getContext().getResources().getString(R.string.message_06));
                             break;
                         case ImageErrorFlag :
                             Dlog.e("test 3333 ImageErrorFlag");
@@ -233,7 +233,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             tv_error_message.setVisibility(View.VISIBLE);
                             iv_noneWebView.setVisibility(View.VISIBLE);
                             iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_unknown_url,null));
-                            tv_error_message.setText("URL 주소를 확인 해 주세요.");
+                            tv_error_message.setText(getContext().getResources().getString(R.string.message_04));
                             break;
                     }
 

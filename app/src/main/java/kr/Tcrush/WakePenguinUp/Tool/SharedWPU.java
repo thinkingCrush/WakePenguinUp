@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
+import kr.Tcrush.WakePenguinUp.R;
 
 public class SharedWPU {
     public boolean getNotFirstUser(Context context){
@@ -106,21 +107,12 @@ public class SharedWPU {
         }
         return null;
     }
-
-    /**
-     *
-     * F44336
-     * 87CEFA
-     * 3F51B5
-     *
-     * */
-
-    public ArrayList<UrlArray> getDefaultArray (){
+    public ArrayList<UrlArray> getDefaultArray (Context context){
         try{
             ArrayList<UrlArray> urlArrays = new ArrayList<>();
-            urlArrays.add(new UrlArray("https://www.youtube.com/","유튜브","Y","#f44336"));
-            urlArrays.add(new UrlArray("https://www.naver.com/","네이버","N","#00FF40"));
-            urlArrays.add(new UrlArray("https://www.google.com/","구글","G","#3f51b5"));
+            urlArrays.add(new UrlArray("https://www.youtube.com/",context.getResources().getString(R.string.item_youtube),"Y","#f44336"));
+            urlArrays.add(new UrlArray("https://www.naver.com/",context.getResources().getString(R.string.item_naver),"N","#00FF40"));
+            urlArrays.add(new UrlArray("https://www.google.com/",context.getResources().getString(R.string.item_google),"G","#3f51b5"));
             return urlArrays;
         }catch (Exception e){
             e.printStackTrace();
