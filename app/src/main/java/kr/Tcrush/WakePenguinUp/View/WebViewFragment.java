@@ -379,7 +379,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_star :
-
                 if(checkStar(String.valueOf(et_url.getText()))){
                     new DialogSupport().editItemDialog(getContext(),new SharedWPU().getUrlArrayList(getContext()),0);
                 }else{
