@@ -197,7 +197,6 @@ public class UrlListFragment extends Fragment {
             sd_urlEditList.setOnMenuItemClickListener(new SlideAndDragListView.OnMenuItemClickListener() {
                 @Override
                 public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
-                    Dlog.e("itemPosition : " + itemPosition + " , buttonPosition : " + buttonPosition);
                     switch (direction){
                         case MenuItem.DIRECTION_RIGHT :
                             switch (buttonPosition){
@@ -233,7 +232,7 @@ public class UrlListFragment extends Fragment {
                 public void onDragViewStart(int beginPosition) {
                     try{
                         dragUrlArray = urlArrays.get(beginPosition);
-
+                        new VibratorSupport().doTick(getContext());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -256,7 +255,6 @@ public class UrlListFragment extends Fragment {
                     try{
                         urlArrays.set(finalPosition,dragUrlArray);
                         new SharedWPU().setUrlArrayList(getContext(),urlArrays);
-                        Dlog.e("test 3333");
                         MainActivity.listRefresh(getContext());
 
                     }catch (Exception e){

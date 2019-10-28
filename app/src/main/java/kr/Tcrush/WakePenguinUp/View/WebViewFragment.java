@@ -365,7 +365,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 wv_webview.setVisibility(View.VISIBLE);
                 iv_noneWebView.setVisibility(View.GONE);
                 wv_webview.loadUrl(url);
-                et_url.setText(url);
+                et_url.setText(checkUrlText(url));
                 lastPage = url;
                 webViewVisible();
             }
@@ -433,6 +433,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
+        Dlog.e("pageError!!!!!!");
+        urlFindFailError();
 
     }
 
