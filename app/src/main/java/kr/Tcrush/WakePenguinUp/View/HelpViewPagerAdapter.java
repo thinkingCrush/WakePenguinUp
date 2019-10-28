@@ -15,7 +15,7 @@ import kr.Tcrush.WakePenguinUp.R;
 public class HelpViewPagerAdapter extends PagerAdapter {
 
 
-    private int[] images = {R.drawable.img_help_1,R.drawable.img_help_2};
+    private int[] images = {R.drawable.img_tutorial_1,R.drawable.img_tutorial_2};
     private LayoutInflater inflater;
     private Context context;
     public HelpViewPagerAdapter(Context context){
