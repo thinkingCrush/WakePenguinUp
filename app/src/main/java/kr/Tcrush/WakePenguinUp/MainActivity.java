@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     view.setBackgroundColor(Color.parseColor("#ffffff"));
                     ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getBaseContext());
                     UrlArray urlArray = urlArrays.get(position);
-                    new WebViewFragment().loadUrl(urlArray.url);
+                    new WebViewFragment().loadUrl(getBaseContext(),urlArray.url);
                     mDrawerLayout.closeDrawer(drawerContainer);
                 }catch (Exception e){
                     e.printStackTrace();

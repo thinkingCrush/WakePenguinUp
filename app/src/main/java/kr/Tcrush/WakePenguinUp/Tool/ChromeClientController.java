@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -73,6 +74,8 @@ public class ChromeClientController extends WebChromeClient {
     }
 
 
+
+
     static class FullscreenHolder extends FrameLayout {
 
         public FullscreenHolder(Context ctx) {
@@ -88,6 +91,7 @@ public class ChromeClientController extends WebChromeClient {
         @Override
         protected void onConfigurationChanged(Configuration newConfig) {
             super.onConfigurationChanged(newConfig);
+
         }
     }
 

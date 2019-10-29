@@ -3,8 +3,12 @@ package kr.Tcrush.WakePenguinUp.View;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +20,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
+import android.webkit.URLUtil;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -45,6 +54,8 @@ import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 public class WebViewFragment extends Fragment implements View.OnClickListener, AdvancedWebView.Listener {
     static EditText et_url;
     ImageView iv_star,iv_list;
@@ -73,6 +84,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         MainActivity.setPageNum(PageNumber.WebViewFragment.ordinal());
         initView(view);
         initHandler();
+        Dlog.e("onCreate");
 
         return view;
     }
@@ -87,7 +99,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     try{
                         String inputData =String.valueOf(textView.getText()) ;
                         inputData = checkUrlText(inputData);
-                        loadUrl(inputData);
+                        loadUrl(getContext(),inputData);
                         //키보드 숨기기
                         if (inputMethodManager != null) {
                             inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
@@ -121,7 +133,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         wv_webview.addJavascriptInterface(new MyJavaScriptInterface(),
                 "android");
 
-
+        wv_webview.getSettings().setDomStorageEnabled(true);
         wv_webview.setWebChromeClient(new ChromeClientController(getActivity()));
 
         WebViewClient mWebViewClient = new WebViewClient() {
@@ -145,16 +157,33 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 }
 
             }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                urlFindFailError();
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Dlog.e("test 1111");
+                if( URLUtil.isNetworkUrl(String.valueOf(request.getUrl())) ) {
+                    Dlog.e("test 2222");
+                    return false;
+                }
+                Dlog.e("test 3333");
+                return true;
+            }
         };
         wv_webview.setWebViewClient(mWebViewClient);
 
         ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
         try{
             if(urlArrays != null && !urlArrays.isEmpty()){
-                loadUrl(urlArrays.get(0).url);
+                loadUrl(getContext(),urlArrays.get(0).url);
             }else{
                 if(lastPage != null ){
-                    loadUrl(lastPage);
+                    loadUrl(getContext(),lastPage);
                 }else{
                     //내용이 없음
                     urlUnknownError();
@@ -232,7 +261,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             MainActivity.checkSidebar(true);
                             break;
                         case ImageErrorFlag :
-                            MainActivity.stopFloating(MainActivity.mainContext);
                             wv_webview.setVisibility(View.GONE);
                             rl_webview_error.setVisibility(View.VISIBLE);
                             tv_error_message.setVisibility(View.VISIBLE);
@@ -340,6 +368,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     public void onResume() {
         super.onResume();
         try{
+            Dlog.e("test 22222");
             if(wv_webview!=null){
                 wv_webview.onResume();
             }
@@ -359,20 +388,32 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     }
 
-    public void loadUrl (String url){
-        try{
-            if(wv_webview!=null){
-                wv_webview.setVisibility(View.VISIBLE);
-                iv_noneWebView.setVisibility(View.GONE);
-                wv_webview.loadUrl(url);
-                et_url.setText(checkUrlText(url));
-                lastPage = url;
-                webViewVisible();
+    public boolean loadUrl (Context context, String url){
+
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = null;
+            if (connectivityManager != null) {
+                networkInfo = connectivityManager.getActiveNetworkInfo();
             }
-        }catch (Exception e){
-            //URL 잘못됨
+            if (networkInfo != null) {
+                if (networkInfo.isConnected()) {
+                    if(wv_webview!=null){
+                        wv_webview.setVisibility(View.VISIBLE);
+                        iv_noneWebView.setVisibility(View.GONE);
+                        wv_webview.loadUrl(url);
+                        et_url.setText(checkUrlText(url));
+                        lastPage = url;
+                        webViewVisible();
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        urlFindFailError();
+        return false;
     }
 
     @Override
@@ -405,7 +446,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         url = url.replace("https://m.","");
                         url = url.replace("http://m.","");
 
-                        Dlog.e("currentUrl : " + currentUrl + " , url : " + url);
                         if(currentUrl.contains(url)||url.contains(currentUrl)){
                             return true;
                         }
@@ -437,6 +477,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         urlFindFailError();
 
     }
+
+
 
     @Override
     public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength, String contentDisposition, String userAgent) {
