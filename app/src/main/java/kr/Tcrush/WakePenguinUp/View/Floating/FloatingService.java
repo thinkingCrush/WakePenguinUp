@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -187,8 +188,9 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
             Display display = mWindowManager.getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
-            MAX_X = size.x ;
-            MAX_Y = size.y;
+            float viewSize = dpToPx(getBaseContext(),88);
+            MAX_X = (int)(size.x-viewSize);
+            MAX_Y = (int)(size.y-viewSize);
 
         }catch (Exception e){
             MAX_X = 800;
@@ -346,5 +348,25 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
             //new ErrorLogManager().saveErrorLog(e);
         }
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if(mParams != null){
+            int x = mParams.x;
+            int y = mParams.y;
+            int preMaxX = MAX_X;
+            int preMaxY = MAX_Y;
+
+            int percentX = (x * MAX_X)/preMaxX;
+            int percentY = (y * MAX_Y)/preMaxY;
+            mParams.x = percentX;
+            mParams.y = percentY;
+
+            setMaxPosition();
+            optimizePosition();
+
+            mWindowManager.updateViewLayout(out_coordinatorLayout, mParams);
+        }
     }
 }

@@ -160,12 +160,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public static void stopFloating(Context context){
-        Dlog.e("stopFloating init ");
         try{
             if(intent != null){
 
                 if(context != null){
-                    Dlog.e("stopFloating!!! STOP!!!");
                     context.stopService(intent);
                 }
 
@@ -236,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if(pageNumber != PageNumber.UrlListFragment.ordinal()){
-                    Dlog.e("test 2222");
                     startFloating(mainContext);
                 }
             }

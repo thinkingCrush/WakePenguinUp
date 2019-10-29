@@ -139,6 +139,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         WebViewClient mWebViewClient = new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
+                Dlog.e("onPageFinished url  : " + url);
                 try{
                     pb_webProgressbar.setVisibility(View.GONE);
                 }catch (Exception e){
@@ -161,19 +162,27 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
+                /*switch (error.getErrorCode()){
+                    case ERROR_AUTHENTICATION:
+                    case ERROR_BAD_URL:
+                    case ERROR_CONNECT:
+                    case ERROR_FAILED_SSL_HANDSHAKE:
+                    case ERROR_FILE:
+                    case ERROR_FILE_NOT_FOUND:
+                    case ERROR_HOST_LOOKUP:
+                    case ERROR_IO:
+                    case ERROR_PROXY_AUTHENTICATION:
+                    case ERROR_REDIRECT_LOOP:
+                    case ERROR_TIMEOUT:
+                    case ERROR_TOO_MANY_REQUESTS:
+                    case ERROR_UNKNOWN:
+                    case ERROR_UNSUPPORTED_AUTH_SCHEME:
+                    case ERROR_UNSUPPORTED_SCHEME:
+                }*/
+                Dlog.e("error : " + error.getErrorCode());
                 urlFindFailError();
             }
 
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Dlog.e("test 1111");
-                if( URLUtil.isNetworkUrl(String.valueOf(request.getUrl())) ) {
-                    Dlog.e("test 2222");
-                    return false;
-                }
-                Dlog.e("test 3333");
-                return true;
-            }
         };
         wv_webview.setWebViewClient(mWebViewClient);
 
@@ -368,7 +377,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     public void onResume() {
         super.onResume();
         try{
-            Dlog.e("test 22222");
             if(wv_webview!=null){
                 wv_webview.onResume();
             }
