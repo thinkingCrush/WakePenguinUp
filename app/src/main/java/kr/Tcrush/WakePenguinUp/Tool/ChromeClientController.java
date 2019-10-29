@@ -40,7 +40,6 @@ public class ChromeClientController extends WebChromeClient {
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        Dlog.e("onShowCustomView");
         if (mCustomView != null) {
             callback.onCustomViewHidden();
             return;
@@ -60,7 +59,6 @@ public class ChromeClientController extends WebChromeClient {
 
     @Override
     public void onHideCustomView() {
-        Dlog.e("onHideCustomView");
         if (mCustomView == null) {
 
             return;
@@ -92,7 +90,6 @@ public class ChromeClientController extends WebChromeClient {
 
         @Override
         protected void onConfigurationChanged(Configuration newConfig) {
-            Dlog.e("onConfigurationChanged");
         }
     }
 
