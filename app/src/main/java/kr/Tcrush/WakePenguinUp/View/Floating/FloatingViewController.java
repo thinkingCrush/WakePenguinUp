@@ -190,7 +190,6 @@ public class FloatingViewController {
                         switch (lockCount){
                             case 1 :
                                 if(floatingHandler != null){
-
                                     floatingHandler.obtainMessage(TextViewFloating,"3").sendToTarget();
                                     floatingHandler.obtainMessage(GaugeFloating,null).sendToTarget();
                                 }
@@ -212,10 +211,10 @@ public class FloatingViewController {
                                     new VibratorSupport().doVibrator(context,300);
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
+                                    WebViewFragment.startGif(context,R.drawable.gif_sleep);
                                 }
                                 break;
                             case 6 :
-                                WebViewFragment.startGif(context,R.drawable.gif_sleep);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
