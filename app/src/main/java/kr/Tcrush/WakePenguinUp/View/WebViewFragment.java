@@ -135,6 +135,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 try{
                     pb_webProgressbar.setVisibility(View.GONE);
                     et_url.setText(url);
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -146,6 +147,14 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 super.onPageStarted(view, url, favicon);
                 try{
                     pb_webProgressbar.setVisibility(View.VISIBLE);
+                    if(et_url!=null && !url.equals("about:blank")) {
+                        if (checkStar(getContext(),url)) {
+                            iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star, null));
+                        } else {
+                            iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star_off, null));
+                        }
+                        webViewVisible();
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -180,26 +189,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
         }
 
-        /*if(!MainActivity.isFloating){
-            try{
-                Context context = getContext();
-                if(context != null){
-                    Intent intent = MainActivity.intent;
-                    if(intent == null){
-                        intent = new Intent(context, FloatingService.class);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        Objects.requireNonNull(context).startForegroundService(intent);
-                    }else {
-                        Objects.requireNonNull(context).startService(intent);
-                    }
 
-                }
-                MainActivity.isFloating = true;
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }*/
 
         pb_webProgressbar = view.findViewById(R.id.pb_webProgressbar);
 
@@ -224,6 +214,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
                     switch (msg.what){
                         case WebViewFlag :
+                            Dlog.e("test 4444");
                             MainActivity.startFloating(MainActivity.mainContext);
                             wv_webview.setVisibility(View.VISIBLE);
                             rl_webview_error.setVisibility(View.GONE);
@@ -346,22 +337,27 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void onResume() {
         super.onResume();
-        try{
-            if(wv_webview!=null){
-                wv_webview.onResume();
+        if(!MainActivity.destroyFlag){
+            try{
+                if(wv_webview!=null){
+                    wv_webview.onResume();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
+
+
+            ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
+            try{
+                if(urlArrays != null && !urlArrays.isEmpty()) {
+                    Dlog.e("test 5555");
+                    MainActivity.startFloating(getContext());
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
-        ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
-        try{
-            if(urlArrays != null && !urlArrays.isEmpty()) {
-                MainActivity.startFloating(getContext());
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
 
     }
@@ -394,11 +390,26 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         return false;
     }
 
+    public static void setStar(final Context context){
+        try{
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if(context!=null){
+                        iv_star.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_star, null));
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_star :
-                if(checkStar(getContext(),String.valueOf(et_url.getText()))){
+                if(checkStar(getContext(),et_url.getText().toString())){
                     ArrayList<UrlArray> urlArrays = new ArrayList<>();
                     urlArrays = new SharedWPU().getUrlArrayList(getContext());
                     for(int i = 0; i < urlArrays.size() ; i++){
@@ -415,7 +426,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
-    public static boolean checkStar (final Context context, String webViewUrl){
+    public boolean checkStar (final Context context, String webViewUrl){
         try{
             String currentUrl = webViewUrl;
             if(currentUrl != null){
@@ -433,19 +444,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         url = url.replace("http://m.","");
 
                         if(currentUrl.contains(url)||url.contains(currentUrl)){
-                            try{
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(context!=null){
-                                            iv_star.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_star, null));
-                                        }
 
-                                    }
-                                });
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
                             return true;
                         }
                     }
@@ -454,18 +453,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             }else{
                 Dlog.e("currentUrl = null");
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        try{
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    if(context != null){
-                        iv_star.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_star_off, null));
-                    }
-                }
-            });
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -512,14 +499,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         @JavascriptInterface
         public void onUrlChange(String url) {
             try{
-                if(et_url!=null && !url.equals("about:blank")) {
-                    if (checkStar(getContext(),url)) {
-                        iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star, null));
-                    } else {
-                        iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star_off, null));
-                    }
-                    webViewVisible();
-                }
+
 
             }catch (Exception e){
                 e.printStackTrace();

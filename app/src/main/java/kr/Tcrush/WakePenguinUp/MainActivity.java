@@ -82,37 +82,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static long time =0;
     @Override
     public void onBackPressed() {
+        try{
+            if(mDrawerLayout.isDrawerOpen(drawerContainer)){
+                mDrawerLayout.closeDrawer(drawerContainer);
+            }else{
+                if(pageNumber== PageNumber.HelpFragment.ordinal()||
+                        pageNumber == PageNumber.WebViewFragment.ordinal()){
+                    if(new WebViewFragment().canGoback()){
+                        new WebViewFragment().goBack();
+                    }else{
+                        if(System.currentTimeMillis()-time>=2000){
+                            time = System.currentTimeMillis();
+                            Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
 
-        if(mDrawerLayout.isDrawerOpen(drawerContainer)){
-            mDrawerLayout.closeDrawer(drawerContainer);
-        }else{
-            if(pageNumber== PageNumber.HelpFragment.ordinal()||
-                pageNumber == PageNumber.WebViewFragment.ordinal()){
-                if(new WebViewFragment().canGoback()){
-                    new WebViewFragment().goBack();
-                }else{
-                    if(System.currentTimeMillis()-time>=2000){
-                        time = System.currentTimeMillis();
-                        Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
-
-                    }else if(System.currentTimeMillis() -time < 2000){
-                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finishAffinity();
-                                System.runFinalization();
-                                System.exit(0);
-                            }
-                        },300);
+                        }else if(System.currentTimeMillis() -time < 2000){
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finishAffinity();
+                                    System.runFinalization();
+                                    System.exit(0);
+                                }
+                            },300);
+                        }
                     }
+                }else if(pageNumber == PageNumber.UrlListFragment.ordinal()){
+                    mainChangeMenu(new WebViewFragment(),null);
+                    //startFloating(getBaseContext());
                 }
-            }else if(pageNumber == PageNumber.UrlListFragment.ordinal()){
-                mainChangeMenu(new WebViewFragment(),null);
-                //startFloating(getBaseContext());
+
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
 
     }
 
@@ -148,9 +150,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public static boolean destroyFlag = false;
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        destroyFlag = true;
+        Dlog.e("onDestroy!!!!");
         stopFloating(this);
     }
 
@@ -236,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if(pageNumber != PageNumber.UrlListFragment.ordinal()){
+                    Dlog.e("test 3333");
                     startFloating(mainContext);
                 }
             }

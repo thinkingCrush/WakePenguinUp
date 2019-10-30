@@ -256,6 +256,7 @@ public class UrlListFragment extends Fragment {
                         urlArrays.set(finalPosition,dragUrlArray);
                         new SharedWPU().setUrlArrayList(getContext(),urlArrays);
                         MainActivity.listRefresh(getContext());
+                        new VibratorSupport().doTick(getContext());
 
                     }catch (Exception e){
                         e.printStackTrace();

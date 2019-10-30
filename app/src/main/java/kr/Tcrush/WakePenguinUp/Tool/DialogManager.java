@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -69,6 +70,7 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
+            Dlog.e("test 1111");
             MainActivity.startFloating(context);
         }
 
@@ -148,7 +150,7 @@ public class DialogManager  extends AlertDialog.Builder {
 
                     MainActivity.listRefresh(context);
                     UrlListFragment.listRefresh(context);
-                    WebViewFragment.checkStar(context,inputUrl);
+                    WebViewFragment.setStar(context);
                     dismiss();
                 }
             });
@@ -210,6 +212,7 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
+            Dlog.e("test 2222");
             MainActivity.startFloating(context);
         }
 
@@ -435,7 +438,7 @@ public class DialogManager  extends AlertDialog.Builder {
                     MainActivity.listRefresh(context);
                     UrlListFragment.listRefresh(context);
                     UrlListFragment.setUrlArrays(context);
-                    WebViewFragment.checkStar(context,inputUrl);
+                    WebViewFragment.setStar(context);
                     dismiss();
                 }
             });
