@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static Intent intent ;
     public static boolean isFloating = false;
     public static void startFloating(Context context){
+        Dlog.e("startFloating");
         try{
             if(!isFloating){
                 if(context != null){
@@ -161,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static void stopFloating(Context context){
         try{
+            Dlog.e("stopFloating");
             if(intent != null){
 
                 if(context != null){
@@ -325,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onClick(View v) {
             try{
+                Dlog.e("test 1111");
                 if(mDrawerLayout != null){
                     mDrawerLayout.openDrawer(drawerContainer);
                 }
@@ -373,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             unRegisterTouch();
             new FloatingViewController().floatingVisible();
             new FloatingViewController().wakeUpAnimation();
-            WebViewFragment.startGif(context,R.drawable.gif_lock);
+            WebViewFragment.startGif(context,R.drawable.gif_wakeup);
         }catch (Exception e){
             e.printStackTrace();
         }

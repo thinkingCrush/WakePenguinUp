@@ -148,7 +148,7 @@ public class UrlListFragment extends Fragment {
                             rl_urlArray.setVisibility(View.VISIBLE);
                             tv_url_errorMessage.setVisibility(View.VISIBLE);
                             iv_url_errorImage.setVisibility(View.VISIBLE);
-                            iv_url_errorImage.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_unknown_url,null));
+                            iv_url_errorImage.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_findfail_url,null));
                             tv_url_errorMessage.setText(getContext().getResources().getString(R.string.message_02));
                             break;
                     }

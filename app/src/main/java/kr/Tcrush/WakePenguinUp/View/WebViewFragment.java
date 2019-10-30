@@ -1,14 +1,11 @@
 package kr.Tcrush.WakePenguinUp.View;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,11 +17,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.SslErrorHandler;
-import android.webkit.URLUtil;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -58,7 +50,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class WebViewFragment extends Fragment implements View.OnClickListener, AdvancedWebView.Listener {
     static EditText et_url;
-    ImageView iv_star,iv_list;
+    static ImageView iv_star,iv_list;
     LinearLayout ll_webToolbar;
     static ImageView iv_noneWebView ;
     TextView tv_error_message ;
@@ -129,6 +121,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         wv_webview = view.findViewById(R.id.wv_webview);
         wv_webview.getSettings().setJavaScriptEnabled(true);
         wv_webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        wv_webview.getSettings().setLoadWithOverviewMode(true);
         wv_webview.getSettings().setSupportMultipleWindows(true);
         wv_webview.addJavascriptInterface(new MyJavaScriptInterface(),
                 "android");
@@ -139,14 +132,14 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         WebViewClient mWebViewClient = new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                Dlog.e("onPageFinished url  : " + url);
                 try{
                     pb_webProgressbar.setVisibility(View.GONE);
+                    et_url.setText(url);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 view.loadUrl("javascript:window.android.onUrlChange(window.location.href);");
-            };
+            }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -159,29 +152,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
             }
 
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-                /*switch (error.getErrorCode()){
-                    case ERROR_AUTHENTICATION:
-                    case ERROR_BAD_URL:
-                    case ERROR_CONNECT:
-                    case ERROR_FAILED_SSL_HANDSHAKE:
-                    case ERROR_FILE:
-                    case ERROR_FILE_NOT_FOUND:
-                    case ERROR_HOST_LOOKUP:
-                    case ERROR_IO:
-                    case ERROR_PROXY_AUTHENTICATION:
-                    case ERROR_REDIRECT_LOOP:
-                    case ERROR_TIMEOUT:
-                    case ERROR_TOO_MANY_REQUESTS:
-                    case ERROR_UNKNOWN:
-                    case ERROR_UNSUPPORTED_AUTH_SCHEME:
-                    case ERROR_UNSUPPORTED_SCHEME:
-                }*/
-                Dlog.e("error : " + error.getErrorCode());
-                urlFindFailError();
-            }
 
         };
         wv_webview.setWebViewClient(mWebViewClient);
@@ -428,8 +398,16 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_star :
-                if(checkStar(String.valueOf(et_url.getText()))){
-                    new DialogSupport().editItemDialog(getContext(),new SharedWPU().getUrlArrayList(getContext()),0);
+                if(checkStar(getContext(),String.valueOf(et_url.getText()))){
+                    ArrayList<UrlArray> urlArrays = new ArrayList<>();
+                    urlArrays = new SharedWPU().getUrlArrayList(getContext());
+                    for(int i = 0; i < urlArrays.size() ; i++){
+                        if(urlArrays.get(i).url.equals(et_url.getText().toString())){
+                            new DialogSupport().editItemDialog(getContext(),urlArrays,i);
+                            break;
+                        }
+                    }
+
                 }else{
                     new DialogSupport().addItemDialog(getContext(),String.valueOf(et_url.getText()));
                 }
@@ -437,11 +415,11 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
-    private boolean checkStar (String webViewUrl){
+    public static boolean checkStar (final Context context, String webViewUrl){
         try{
             String currentUrl = webViewUrl;
             if(currentUrl != null){
-                ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
+                ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(context);
                 if(urlArrays!=null && !urlArrays.isEmpty()){
                     for(UrlArray urlArray : urlArrays){
                         String url = urlArray.url;
@@ -455,6 +433,19 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         url = url.replace("http://m.","");
 
                         if(currentUrl.contains(url)||url.contains(currentUrl)){
+                            try{
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(context!=null){
+                                            iv_star.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_star, null));
+                                        }
+
+                                    }
+                                });
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                             return true;
                         }
                     }
@@ -466,6 +457,20 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }catch (Exception e){
             e.printStackTrace();
         }
+        try{
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if(context != null){
+                        iv_star.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_star_off, null));
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         return false;
     }
 
@@ -508,8 +513,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         public void onUrlChange(String url) {
             try{
                 if(et_url!=null && !url.equals("about:blank")) {
-                    et_url.setText(url);
-                    if (checkStar(url)) {
+                    if (checkStar(getContext(),url)) {
                         iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star, null));
                     } else {
                         iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star_off, null));

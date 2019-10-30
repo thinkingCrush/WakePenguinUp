@@ -28,6 +28,7 @@ import kr.Tcrush.WakePenguinUp.Data.UrlArrayManager;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.View.UrlListFragment;
+import kr.Tcrush.WakePenguinUp.View.WebViewFragment;
 
 public class DialogManager  extends AlertDialog.Builder {
 
@@ -147,6 +148,7 @@ public class DialogManager  extends AlertDialog.Builder {
 
                     MainActivity.listRefresh(context);
                     UrlListFragment.listRefresh(context);
+                    WebViewFragment.checkStar(context,inputUrl);
                     dismiss();
                 }
             });
@@ -208,11 +210,13 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
+            MainActivity.startFloating(context);
         }
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            MainActivity.stopFloating(context);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.dialog_positive_negative);
 
@@ -431,6 +435,7 @@ public class DialogManager  extends AlertDialog.Builder {
                     MainActivity.listRefresh(context);
                     UrlListFragment.listRefresh(context);
                     UrlListFragment.setUrlArrays(context);
+                    WebViewFragment.checkStar(context,inputUrl);
                     dismiss();
                 }
             });

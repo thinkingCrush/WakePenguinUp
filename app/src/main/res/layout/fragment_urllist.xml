@@ -77,11 +77,13 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textColor="#000000"
-                        android:textSize="23dp"/>
+                        android:textSize="23dp"
+                        android:layout_marginBottom="30dp"/>
                 <ImageView
                         android:id="@+id/iv_url_errorImage"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="30dp"/>
 
             </LinearLayout>
 

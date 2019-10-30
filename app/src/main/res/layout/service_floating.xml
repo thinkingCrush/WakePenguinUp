@@ -38,7 +38,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/iv_floating_lock"
-                    android:src="@drawable/icon_lock_opened"
+                    android:src="@drawable/img_unlock"
+                    android:paddingBottom="5dp"
                     android:visibility="visible"/>
 
         </LinearLayout>

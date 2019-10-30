@@ -85,37 +85,42 @@ public class FloatingViewController {
                     case CountFloating :
                         break;
                     case GaugeFloating :
-                        fg_outGauge.setValue(gaugeValue);
+                        try{
+                            fg_outGauge.setValue(gaugeValue);
 
-                        gaugeTimer = new Timer();
-                        gaugeTimer.scheduleAtFixedRate(new TimerTask() {
-                            @Override
-                            public void run() {
-                                if(gaugeValue >1000){
-                                    gaugeValue = 0;
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            fg_outGauge.setVisibility(View.GONE);
-                                        }
-                                    });
-                                    this.cancel();
-                                }else{
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            fg_outGauge.setVisibility(View.VISIBLE);
-                                        }
-                                    });
-                                    gaugeValue = gaugeValue+10;
-                                    fg_outGauge.setValue(gaugeValue);
+                            gaugeTimer = new Timer();
+                            gaugeTimer.scheduleAtFixedRate(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    if(gaugeValue >1000){
+                                        gaugeValue = 0;
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                fg_outGauge.setVisibility(View.GONE);
+                                            }
+                                        });
+                                        this.cancel();
+                                    }else{
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                fg_outGauge.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                                        gaugeValue = gaugeValue+10;
+                                        fg_outGauge.setValue(gaugeValue);
+                                    }
                                 }
-                            }
-                        },0,10);
+                            },0,10);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         break;
                     case ImageViewFloating :
                         iv_floating_lock.setVisibility(View.VISIBLE);
-                        iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_lock_closeed,null));
+                        iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_lock,null));
 
                         final Animation animTransTwits = AnimationUtils.loadAnimation(
                                 context,R.anim.animation_floating_lock);
@@ -157,6 +162,7 @@ public class FloatingViewController {
                     case VisibleFloating :
                         Dlog.e("VisibleFloating");
                         iv_floating_lock.setVisibility(View.VISIBLE);
+                        iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_unlock,null));
                         rl_outfloatingLayout.setVisibility(View.VISIBLE);
                         ll_floating.setVisibility(View.VISIBLE);
                         fg_outGauge.setVisibility(View.GONE);
@@ -209,7 +215,7 @@ public class FloatingViewController {
                                 }
                                 break;
                             case 6 :
-                                WebViewFragment.startGif(context,R.drawable.gif_lock);
+                                WebViewFragment.startGif(context,R.drawable.gif_sleep);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
