@@ -338,10 +338,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     mDrawerLayout.openDrawer(drawerContainer);
                 }
 
-                InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(INPUT_METHOD_SERVICE);
-                if (inputMethodManager != null) {
-                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(),0);
+                try{
+                    InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(INPUT_METHOD_SERVICE);
+                    if (inputMethodManager != null) {
+                        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(),0);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
 
 
             }catch (Exception e){

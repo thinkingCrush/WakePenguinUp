@@ -93,9 +93,14 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         inputData = checkUrlText(inputData);
                         loadUrl(getContext(),inputData);
                         //키보드 숨기기
-                        if (inputMethodManager != null) {
-                            inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
+                        try{
+                            if (inputMethodManager != null) {
+                                inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
+
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -184,11 +189,15 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         ll_webToolbar = view.findViewById(R.id.ll_webToolbar);
 
         new SharedWPU().setFirstUser(Objects.requireNonNull(getContext()));
-        inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
-            Dlog.e("test 1111");
-            inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
+        try{
+            inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
 
 
 
