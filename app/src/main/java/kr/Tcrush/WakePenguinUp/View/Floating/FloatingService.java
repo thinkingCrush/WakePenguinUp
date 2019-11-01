@@ -208,7 +208,6 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.rl_outfloatingLayout :
-                Dlog.e("test 1111");
                 if(!FloatingClicked){
                     new FloatingViewController().screenLock(getBaseContext());
                     setFloatingClicked(true);

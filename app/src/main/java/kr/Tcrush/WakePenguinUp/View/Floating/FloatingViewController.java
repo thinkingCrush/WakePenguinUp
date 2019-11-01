@@ -109,7 +109,13 @@ public class FloatingViewController {
                                             }
                                         });
                                         gaugeValue = gaugeValue+10;
-                                        fg_outGauge.setValue(gaugeValue);
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                fg_outGauge.setValue(gaugeValue);
+                                            }
+                                        });
+
                                     }
                                 }
                             },0,10);
@@ -152,11 +158,17 @@ public class FloatingViewController {
 
                     case GoneFloating :
                         Dlog.e("GoneFloating");
-                        iv_floating_lock.setVisibility(View.GONE);
-                        rl_outfloatingLayout.setVisibility(View.GONE);
-                        fg_outGauge.setVisibility(View.GONE);
-                        tv_floating_count.setVisibility(View.GONE);
-                        ll_floating.setVisibility(View.GONE);
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                iv_floating_lock.setVisibility(View.GONE);
+                                rl_outfloatingLayout.setVisibility(View.GONE);
+                                fg_outGauge.setVisibility(View.GONE);
+                                tv_floating_count.setVisibility(View.GONE);
+                                ll_floating.setVisibility(View.GONE);
+                            }
+                        });
+
                         break;
 
                     case VisibleFloating :

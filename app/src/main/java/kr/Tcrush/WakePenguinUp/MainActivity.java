@@ -469,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float gForce = (float)squaredD;
             if(gForce > SHAKE_THRESHOLD_GRAVITY){
                 long currentTime = System.currentTimeMillis();
+                Dlog.e("shakeTime : " +shakeTime + " , SHAKE_SKIP_TIME: " + SHAKE_SKIP_TIME + " , currentTime : " +currentTime);
                 if(shakeTime + SHAKE_SKIP_TIME > currentTime){
                     return;
                 }
