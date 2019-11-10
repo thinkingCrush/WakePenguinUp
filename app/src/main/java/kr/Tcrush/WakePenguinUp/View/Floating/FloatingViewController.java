@@ -223,7 +223,7 @@ public class FloatingViewController {
                                     new VibratorSupport().doVibrator(context,300);
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
-                                    WebViewFragment.startGif(context,R.drawable.gif_sleep);
+                                    WebViewFragment.startGif(context,R.drawable.change_image_sleep);
                                 }
                                 break;
                             case 6 :

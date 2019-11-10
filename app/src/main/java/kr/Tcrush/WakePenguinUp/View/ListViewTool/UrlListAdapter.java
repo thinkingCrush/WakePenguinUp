@@ -80,7 +80,13 @@ public class UrlListAdapter extends BaseAdapter{
 
         viewHolder.tv_strAddressName.setText(String.valueOf(strUrlName));
         Drawable roundDrawable = context.getResources().getDrawable(R.drawable.drawerlayout_listitem_icon_background,null);
-        roundDrawable.setColorFilter(Color.parseColor(textBgColor), PorterDuff.Mode.SRC_ATOP);
+        try{
+            roundDrawable.setColorFilter(Color.parseColor(textBgColor), PorterDuff.Mode.SRC_ATOP);
+        }catch (Exception e){
+            roundDrawable.setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_ATOP);
+            e.printStackTrace();
+        }
+
         viewHolder.fl_drawer_icon_background.setBackground(roundDrawable);
 
         viewHolder.tv_urlFirstText.setText(firstText);

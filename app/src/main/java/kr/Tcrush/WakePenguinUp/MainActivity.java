@@ -1,6 +1,7 @@
 package kr.Tcrush.WakePenguinUp;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,8 +39,11 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
@@ -127,9 +131,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static Intent intent ;
     public static boolean isFloating = false;
+
     public static void startFloating(Context context){
         Dlog.e("startFloating");
         try{
+
             if(!isFloating){
                 if(context != null){
                     if(intent == null){
@@ -165,17 +171,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         stopFloating(this);
     }
 
-    public static void stopFloating(Context context){
+    private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        try{
+            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            if (manager != null) {
+                for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                    if (serviceClass.getName().equals(service.service.getClassName())) {
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void stopFloating(final Context context){
         try{
             Dlog.e("stopFloating");
-            if(intent != null){
+            if(context!=null){
+                if(isMyServiceRunning(context,FloatingService.class)){
+                    if(intent != null){
+                        context.stopService(intent);
 
-                if(context != null){
-                    context.stopService(intent);
+                    }
                 }
-
             }
-
             isFloating = false;
         }catch (Exception e){
             e.printStackTrace();
@@ -387,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             unRegisterTouch();
             new FloatingViewController().floatingVisible();
             new FloatingViewController().wakeUpAnimation();
-            WebViewFragment.startGif(context,R.drawable.gif_wakeup);
+            WebViewFragment.startGif(context,R.drawable.change_image_wakeup);
         }catch (Exception e){
             e.printStackTrace();
         }

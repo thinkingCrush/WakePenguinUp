@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -224,7 +225,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
                     switch (msg.what){
                         case WebViewFlag :
-                            Dlog.e("test 4444");
                             MainActivity.startFloating(MainActivity.mainContext);
                             wv_webview.setVisibility(View.VISIBLE);
                             rl_webview_error.setVisibility(View.GONE);
@@ -518,29 +518,27 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     }
 
 
-
     public static void startGif(final Context context,final int drawable){
+
         try{
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     iv_gifImage.setVisibility(View.VISIBLE);
-                    final GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(iv_gifImage);
-                    Glide.with(context).load(drawable).into(gifImage);
-                    //5초뒤에 없애야함.
+                    iv_gifImage.setBackground(context.getResources().getDrawable(drawable,null));
+                    final AnimationDrawable animationDrawable = (AnimationDrawable)iv_gifImage.getBackground();
+                    animationDrawable.start();
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Glide.clear(gifImage);
+                            animationDrawable.stop();
                             iv_gifImage.setVisibility(View.GONE);
                         }
                     },5000);
                 }
             });
+
         }catch (Exception e){
-            if(iv_gifImage!=null){
-                iv_gifImage.setVisibility(View.GONE);
-            }
             e.printStackTrace();
         }
 
