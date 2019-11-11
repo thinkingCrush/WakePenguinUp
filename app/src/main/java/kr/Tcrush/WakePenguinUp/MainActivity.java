@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             Toast.makeText(getBaseContext(),getBaseContext().getResources().getString(R.string.popup_mainBackPressNoti),Toast.LENGTH_LONG).show();
 
                         }else if(System.currentTimeMillis() -time < 2000){
+                            stopFloatingBackPressed(getBaseContext());
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -202,6 +203,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 isFloating = false;
             }
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void stopFloatingBackPressed(final Context context){
+        try{
+            if(context!=null){
+                if(isMyServiceRunning(context,FloatingService.class)){
+                    if(intent != null){
+                        context.stopService(intent);
+
+                    }
+                }
+            }
+            isFloating = false;
         }catch (Exception e){
             e.printStackTrace();
         }
