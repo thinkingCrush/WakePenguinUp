@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static void startFloating(Context context){
         Dlog.e("startFloating");
         try{
-
+            Dlog.e("");
             if(!isFloating){
                 if(context != null){
                     if(intent == null){
@@ -190,15 +190,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static void stopFloating(final Context context){
         try{
             Dlog.e("stopFloating");
-            if(context!=null){
-                if(isMyServiceRunning(context,FloatingService.class)){
-                    if(intent != null){
-                        context.stopService(intent);
+            if(!TouchLockFlag){
+                if(context!=null){
+                    if(isMyServiceRunning(context,FloatingService.class)){
+                        if(intent != null){
+                            context.stopService(intent);
 
+                        }
                     }
                 }
+                isFloating = false;
             }
-            isFloating = false;
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -477,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private long shakeTime ;
     private static final int SHAKE_SKIP_TIME = 600;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 6.8f;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 6.0f;
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -496,7 +499,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float gForce = (float)squaredD;
             if(gForce > SHAKE_THRESHOLD_GRAVITY){
                 long currentTime = System.currentTimeMillis();
-                Dlog.e("shakeTime : " +shakeTime + " , SHAKE_SKIP_TIME: " + SHAKE_SKIP_TIME + " , currentTime : " +currentTime);
                 if(shakeTime + SHAKE_SKIP_TIME > currentTime){
                     return;
                 }
