@@ -17,6 +17,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="#ffffff">
             <EditText
                     android:id="@+id/et_url"
@@ -81,7 +82,7 @@
                     android:id="@+id/pb_webProgressbar"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:indeterminateTint="#A8A8A8"
+                    android:indeterminateTint="#FFEB3B"
                     android:layout_gravity="center"
                     android:visibility="gone"/>
             <RelativeLayout

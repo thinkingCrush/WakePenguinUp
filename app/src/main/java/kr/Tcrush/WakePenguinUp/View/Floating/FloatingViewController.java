@@ -221,18 +221,18 @@ public class FloatingViewController {
                             case 4 :
                                 if(floatingHandler != null){
                                     new VibratorSupport().doVibrator(context,300);
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            new MainActivity().touchLock();
+                                        }
+                                    });
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                     WebViewFragment.startGif(context,R.drawable.change_image_sleep);
                                 }
                                 break;
                             case 6 :
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new MainActivity().touchLock();
-                                    }
-                                });
                                 FloatingService.setFloatingClicked(false);
                                 this.cancel();
                                 lockCount  =0;
