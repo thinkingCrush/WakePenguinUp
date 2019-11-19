@@ -39,11 +39,8 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
@@ -136,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static void startFloating(Context context){
         Dlog.e("startFloating");
         try{
-            Dlog.e("");
             if(!isFloating){
                 if(context != null){
                     if(intent == null){
@@ -563,4 +559,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             e.printStackTrace();
         }
     }
+
 }

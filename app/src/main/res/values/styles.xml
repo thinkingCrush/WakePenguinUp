@@ -22,4 +22,8 @@
         <item name="android:statusBarColor">#949494</item>
     </style>
 
+    <style name="EditTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/dialogCancleGray</item>
+    </style>
+
 </resources>

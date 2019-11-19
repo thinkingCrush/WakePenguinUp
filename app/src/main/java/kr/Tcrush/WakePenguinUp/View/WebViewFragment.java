@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +32,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -55,6 +54,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     LinearLayout ll_webToolbar;
     static ImageView iv_noneWebView ;
     TextView tv_error_message ;
+    ImageView iv_textCancel;
 
 
     static AdvancedWebView wv_webview;
@@ -78,9 +78,10 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         initView(view);
         initHandler();
         Dlog.e("onCreate");
-
         return view;
     }
+
+
     @SuppressLint("ClickableViewAccessibility")
     private void initView (View view){
         //TEST
@@ -98,6 +99,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             if (inputMethodManager != null) {
                                 inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
                             }
+                            et_url.clearFocus();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -109,6 +111,51 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 return true;
             }
         });
+        iv_textCancel = view.findViewById(R.id.iv_textCancel);
+        iv_textCancel.setOnClickListener(this);
+        iv_textCancel.setVisibility(View.GONE);
+        et_url.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String inputText =s.toString();
+                if(inputText.equals("")){
+                    //GONE
+                    try{
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                iv_textCancel.setVisibility(View.GONE);
+                            }
+                        });
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    //VISIBLE
+                    try{
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                iv_textCancel.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
 
         iv_star = view.findViewById(R.id.iv_star);
         iv_star.setOnTouchListener(new ViewClickEffect());
@@ -208,8 +255,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
 
 
-
     }
+
 
 
 
@@ -433,6 +480,10 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     new DialogSupport().addItemDialog(getContext(),String.valueOf(et_url.getText()));
                 }
                 break;
+
+            case R.id.iv_textCancel :
+                et_url.setText("");
+                break;
         }
     }
 
@@ -503,7 +554,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
+}
 
     private class MyJavaScriptInterface {
         @JavascriptInterface
@@ -543,4 +594,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }
 
     }
+
+
+
 }
