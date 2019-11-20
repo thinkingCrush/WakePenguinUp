@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                 }else if(pageNumber == PageNumber.UrlListFragment.ordinal()){
                     mainChangeMenu(new WebViewFragment(),null);
-                    //startFloating(getBaseContext());
+                    //startService(getBaseContext());
                 }
 
             }
@@ -130,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static Intent intent ;
     public static boolean isFloating = false;
 
-    public static void startFloating(Context context){
-        Dlog.e("startFloating");
+    public static void startService(Context context){
+        Dlog.e("startService");
         try{
             if(!isFloating){
                 if(context != null){
@@ -153,19 +153,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public static void visibleFloating(){
+        new FloatingViewController().floatingVisible();
+    }
+
     public static boolean destroyFlag = false;
     @Override
     protected void onDestroy() {
         super.onDestroy();
         destroyFlag = true;
         Dlog.e("onDestroy!!!!");
-        stopFloating(this);
+        finishService(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopFloating(this);
+        finishService(this);
     }
 
     private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
@@ -184,9 +188,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return false;
     }
 
-    public static void stopFloating(final Context context){
+    public static void finishService(final Context context){
         try{
-            Dlog.e("stopFloating");
+            Dlog.e("finishService");
             if(!TouchLockFlag){
                 if(context!=null){
                     if(isMyServiceRunning(context,FloatingService.class)){
@@ -202,6 +206,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static void stopFloating(){
+        new FloatingViewController().floatingGone();
     }
 
     public static void stopFloatingBackPressed(final Context context){
@@ -273,14 +281,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
-                stopFloating(mainContext);
+                //inishService(mainContext);
+                MainActivity.stopFloating();
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if(pageNumber != PageNumber.UrlListFragment.ordinal()){
                     Dlog.e("test 3333");
-                    startFloating(mainContext);
+                    //startService(mainContext);
+                    MainActivity.visibleFloating();
                 }
             }
 
@@ -298,7 +308,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View view) {
                 mDrawerLayout.closeDrawer(drawerContainer);mDrawerLayout.closeDrawer(drawerContainer);
                 mainChangeMenu(new UrlListFragment(),"Right");
-                stopFloating(getBaseContext());
+                //finishService(getBaseContext());
+                MainActivity.stopFloating();
 
             }
         });

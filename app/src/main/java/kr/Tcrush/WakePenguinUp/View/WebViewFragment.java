@@ -272,7 +272,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
                     switch (msg.what){
                         case WebViewFlag :
-                            MainActivity.startFloating(MainActivity.mainContext);
+                            //MainActivity.startService(MainActivity.mainContext);
+                            MainActivity.visibleFloating();
                             wv_webview.setVisibility(View.VISIBLE);
                             rl_webview_error.setVisibility(View.GONE);
                             tv_error_message.setVisibility(View.GONE);
@@ -408,7 +409,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             try{
                 if(urlArrays != null && !urlArrays.isEmpty()) {
                     Dlog.e("test 5555");
-                    MainActivity.startFloating(getContext());
+                    MainActivity.startService(getContext());
+                    //MainActivity.visibleFloating();
                 }
             }catch (Exception e){
                 e.printStackTrace();

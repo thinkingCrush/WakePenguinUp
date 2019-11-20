@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -70,7 +69,8 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
-            MainActivity.startFloating(context);
+            //MainActivity.startService(context);
+            MainActivity.visibleFloating();
         }
 
         @Override
@@ -79,7 +79,8 @@ public class DialogManager  extends AlertDialog.Builder {
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.dialog_positive_negative);
 
-            MainActivity.stopFloating(context);
+            //MainActivity.finishService(context);
+            MainActivity.stopFloating();
 
             fl_dialog_icon_background = findViewById(R.id.fl_dialog_icon_background);
             tv_dialog_firstText = findViewById(R.id.tv_dialog_firstText);
@@ -212,13 +213,15 @@ public class DialogManager  extends AlertDialog.Builder {
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
             Dlog.e("test 2222");
-            MainActivity.startFloating(context);
+            //MainActivity.startService(context);
+            MainActivity.visibleFloating();
         }
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            MainActivity.stopFloating(context);
+            //MainActivity.finishService(context);
+            MainActivity.stopFloating();
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.dialog_positive_negative);
 
