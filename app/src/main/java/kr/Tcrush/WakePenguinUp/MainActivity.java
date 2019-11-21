@@ -422,7 +422,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Dlog.e("touch Lock");
             TouchLockFlag = true;
             registerTouch();
-            new FloatingViewController().floatingGone();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -449,6 +448,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(TouchLockFlag){
                     return false;
                 }else{
+                    WebViewFragment.checkEditTextTouch(getBaseContext(),ev);
                     return super.dispatchTouchEvent(ev);
                 }
 

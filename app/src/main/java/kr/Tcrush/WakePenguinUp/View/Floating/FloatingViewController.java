@@ -27,24 +27,6 @@ import kr.Tcrush.WakePenguinUp.View.WebViewFragment;
 
 public class FloatingViewController {
 
-    /*private static Context context;
-    private static TextView tv_floating_count;
-    private static LinearLayout ll_floating;
-    private static ImageView iv_floating_lock;
-    private static FloatingGauge fg_outGauge;
-    private static RelativeLayout rl_outFloatingLayout;
-
-    public FloatingTest(Context context, TextView tv_floating_count, LinearLayout ll_floating,
-                        ImageView iv_floating_lock , FloatingGauge fg_outGauge, RelativeLayout rl_outFloatingLayout){
-        this.context = context;
-        this.tv_floating_count = tv_floating_count;
-        this.ll_floating = ll_floating;
-        this.iv_floating_lock = iv_floating_lock;
-        this.fg_outGauge = fg_outGauge;
-        this.rl_outFloatingLayout = rl_outFloatingLayout;
-
-    }*/
-
     /**
      * 기능이 무엇이 있을까?
      * 1. 카운트 다운 게이지랑 숫자 움직이는거
@@ -210,6 +192,7 @@ public class FloatingViewController {
 
                     case StartGIF :
                         try{
+                            iv_gifImage.setVisibility(View.INVISIBLE);
                             iv_gifImage.setBackground(context.getResources().getDrawable((int)msg.obj,null));
                             final AnimationDrawable animationDrawable = (AnimationDrawable)iv_gifImage.getBackground();
                             animationDrawable.start();
@@ -278,6 +261,7 @@ public class FloatingViewController {
                                 }
                                 break;
                             case 6 :
+                                new FloatingViewController().floatingGone();
                                 FloatingService.setFloatingClicked(false);
                                 this.cancel();
                                 lockCount  =0;

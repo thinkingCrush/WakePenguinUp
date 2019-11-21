@@ -1,10 +1,12 @@
 package kr.Tcrush.WakePenguinUp.View;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.AnimationDrawable;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -15,14 +17,18 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -40,7 +46,6 @@ import im.delight.android.webview.AdvancedWebView;
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
-import kr.Tcrush.WakePenguinUp.Tool.ChromeClientController;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
@@ -55,17 +60,18 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     static ImageView iv_noneWebView ;
     TextView tv_error_message ;
     ImageView iv_textCancel;
+    LinearLayout ll_webviewPage;
 
 
     static AdvancedWebView wv_webview;
     //WebView wv_webview;
 
-    InputMethodManager inputMethodManager;
+    static InputMethodManager inputMethodManager;
 
     Handler viewHandler ;
 
     RelativeLayout rl_webview_error ;
-    ProgressBar pb_webProgressbar;
+    static ProgressBar pb_webProgressbar;
 
 
 
@@ -84,7 +90,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView (View view){
-        //TEST
+        ll_webviewPage = view.findViewById(R.id.ll_webviewPage);
         et_url=view.findViewById(R.id.et_url);
         et_url.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -96,9 +102,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         loadUrl(getContext(),inputData);
                         //키보드 숨기기
                         try{
-                            if (inputMethodManager != null) {
-                                inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
-                            }
+                            hideKeyboard(getContext());
                             et_url.clearFocus();
                         }catch (Exception e){
                             e.printStackTrace();
@@ -111,6 +115,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 return true;
             }
         });
+
         iv_textCancel = view.findViewById(R.id.iv_textCancel);
         iv_textCancel.setOnClickListener(this);
         iv_textCancel.setVisibility(View.GONE);
@@ -134,18 +139,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                }else{
-                    //VISIBLE
-                    try{
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                iv_textCancel.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
                 }
 
 
@@ -153,6 +146,41 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+
+        et_url.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    final String inputText = String.valueOf(et_url.getText());
+                    if(!inputText.equals("")){
+                        try{
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Dlog.e("inputLength : "+ inputText.length());
+                                    et_url.setSelection(inputText.length());
+                                    iv_textCancel.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    //포커스 풀릴때
+                    try{
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                iv_textCancel.setVisibility(View.GONE);
+                            }
+                        });
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -183,17 +211,22 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         wv_webview.setWebChromeClient(new ChromeClientController(getActivity()));
 
         WebViewClient mWebViewClient = new WebViewClient() {
-            @Override
+
+            /*@Override
             public void onPageFinished(WebView view, String url) {
                 try{
                     pb_webProgressbar.setVisibility(View.GONE);
-                    et_url.setText(url);
+                    if(url.contains("about:blank")){
+                        et_url.setText("");
+                    }else{
+                        et_url.setText(view.getUrl());
+                    }
 
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 view.loadUrl("javascript:window.android.onUrlChange(window.location.href);");
-            }
+            }*/
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -202,18 +235,20 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     pb_webProgressbar.setVisibility(View.VISIBLE);
                     if(et_url!=null && !url.equals("about:blank")) {
                         if (checkStar(getContext(),url)) {
-                            iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star, null));
+                            iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star, null));
                         } else {
-                            iv_star.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_star_off, null));
+                            iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star_off, null));
                         }
                         webViewVisible();
+                    }else{
+                        iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star_off, null));
+                        urlFindFailError();
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
 
             }
-
 
         };
         wv_webview.setWebViewClient(mWebViewClient);
@@ -237,14 +272,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         ll_webToolbar = view.findViewById(R.id.ll_webToolbar);
 
         new SharedWPU().setFirstUser(Objects.requireNonNull(getContext()));
-        try{
-            inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputMethodManager != null) {
-                inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        hideKeyboard(getContext());
 
 
 
@@ -256,6 +284,35 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
     }
 
+    public static void hideKeyboard (Context context){
+        try{
+            inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(et_url.getWindowToken(),0);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkEditTextTouch(Context context, MotionEvent event){
+        try{
+            if(et_url != null){
+                if (et_url.isFocused()) {
+                    Rect outRect = new Rect();
+                    et_url.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        hideKeyboard(context);
+                        et_url.clearFocus();
+                    }
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
 
 
@@ -488,7 +545,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
-    public boolean checkStar (final Context context, String webViewUrl){
+    public static boolean checkStar (final Context context, String webViewUrl){
         try{
             String currentUrl = webViewUrl;
             if(currentUrl != null){
@@ -496,6 +553,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 if(urlArrays!=null && !urlArrays.isEmpty()){
                     for(UrlArray urlArray : urlArrays){
                         String url = urlArray.url;
+                        Dlog.e("webViewUrl : " + webViewUrl + " , url : " + url);
                         currentUrl = currentUrl.replace("https://www.","");
                         currentUrl = currentUrl.replace("http://www.","");
                         currentUrl = currentUrl.replace("https://m.","");
@@ -505,8 +563,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         url = url.replace("https://m.","");
                         url = url.replace("http://m.","");
 
-                        if(currentUrl.contains(url)||url.contains(currentUrl)){
-
+                        if(currentUrl.equals(url)){
                             return true;
                         }
                     }
@@ -567,6 +624,113 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 e.printStackTrace();
             }
         }
+    }
+
+    public class ChromeClientController extends WebChromeClient {
+
+        private View mCustomView;
+        private Activity mActivity;
+
+        public ChromeClientController(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            result.confirm();
+            return super.onJsAlert(view, url, message, result);
+        }
+
+
+        private FullscreenHolder mFullscreenContainer;
+        private CustomViewCallback mCustomViewCollback;
+
+
+
+
+        @Override
+        public void onShowCustomView(View view, CustomViewCallback callback) {
+            if (mCustomView != null) {
+                callback.onCustomViewHidden();
+                return;
+            }
+
+
+            FrameLayout decor = (FrameLayout) mActivity.getWindow().getDecorView();
+
+            mFullscreenContainer = new FullscreenHolder(mActivity);
+            mFullscreenContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT);
+            decor.addView(mFullscreenContainer, ViewGroup.LayoutParams.MATCH_PARENT);
+            mCustomView = view;
+            mCustomViewCollback = callback;
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
+        }
+
+        @Override
+        public void onHideCustomView() {
+            if (mCustomView == null) {
+
+                return;
+            }
+
+            FrameLayout decor = (FrameLayout) mActivity.getWindow().getDecorView();
+            decor.removeView(mFullscreenContainer);
+            mFullscreenContainer = null;
+            mCustomView = null;
+            mCustomViewCollback.onCustomViewHidden();
+
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
+        @Override
+        public void onReceivedTitle(WebView view, String title) {
+            super.onReceivedTitle(view, title);
+            try{
+                pb_webProgressbar.setVisibility(View.GONE);
+                if(et_url != null){
+                    if( view != null){
+                        if(view.getUrl().contains("about:blank")){
+                            et_url.setText("");
+                        }else{
+                            et_url.setText(view.getUrl());
+
+                            if (checkStar(getContext(),view.getUrl())) {
+                                iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star, null));
+                            } else {
+                                iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star_off, null));
+                            }
+                        }
+
+                    }
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+        class FullscreenHolder extends FrameLayout {
+
+            public FullscreenHolder(Context ctx) {
+                super(ctx);
+                setBackgroundColor(ctx.getResources().getColor(android.R.color.black,null));
+            }
+
+            @Override
+            public boolean onTouchEvent(MotionEvent evt) {
+                return true;
+            }
+
+            @Override
+            protected void onConfigurationChanged(Configuration newConfig) {
+            }
+        }
+
+
+
+
     }
 
 
