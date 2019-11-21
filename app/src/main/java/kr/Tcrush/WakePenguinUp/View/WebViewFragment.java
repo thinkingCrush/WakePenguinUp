@@ -67,7 +67,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     RelativeLayout rl_webview_error ;
     ProgressBar pb_webProgressbar;
 
-    static ImageView iv_gifImage;
+
 
     static String lastPage;
     @Nullable
@@ -251,7 +251,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
         pb_webProgressbar = view.findViewById(R.id.pb_webProgressbar);
 
-        iv_gifImage = view.findViewById(R.id.iv_gifImage);
 
 
 
@@ -570,32 +569,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
-
-    public static void startGif(final Context context,final int drawable){
-
-        try{
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    iv_gifImage.setVisibility(View.VISIBLE);
-                    iv_gifImage.setBackground(context.getResources().getDrawable(drawable,null));
-                    final AnimationDrawable animationDrawable = (AnimationDrawable)iv_gifImage.getBackground();
-                    animationDrawable.start();
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            animationDrawable.stop();
-                            iv_gifImage.setVisibility(View.GONE);
-                        }
-                    },5000);
-                }
-            });
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
 
 
 

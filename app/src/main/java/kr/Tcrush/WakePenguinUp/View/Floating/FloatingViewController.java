@@ -1,6 +1,7 @@
 package kr.Tcrush.WakePenguinUp.View.Floating;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -72,12 +73,13 @@ public class FloatingViewController {
     public final int UnTouchLockFloating = 6;
     public final int GoneFloating = 7;
     public final int VisibleFloating = 8;
+    public final int StartGIF = 9;
 
 
     private static int gaugeValue = 0;
     private static Timer gaugeTimer = null;
     public void initHandler(final Context context, final TextView tv_floating_count, final LinearLayout ll_floating,
-                            final ImageView iv_floating_lock , final FloatingGauge fg_outGauge, final RelativeLayout rl_outfloatingLayout){
+                            final ImageView iv_floating_lock , final FloatingGauge fg_outGauge, final RelativeLayout rl_outfloatingLayout, final ImageView iv_gifImage){
         floatingHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
@@ -125,25 +127,35 @@ public class FloatingViewController {
 
                         break;
                     case ImageViewFloating :
-                        iv_floating_lock.setVisibility(View.VISIBLE);
-                        iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_lock,null));
+                        try{
+                            iv_floating_lock.setVisibility(View.VISIBLE);
+                            iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_lock,null));
 
-                        final Animation animTransTwits = AnimationUtils.loadAnimation(
-                                context,R.anim.animation_floating_lock);
-                        rl_outfloatingLayout.startAnimation(animTransTwits);
+                            final Animation animTransTwits = AnimationUtils.loadAnimation(
+                                    context,R.anim.animation_floating_lock);
+                            rl_outfloatingLayout.startAnimation(animTransTwits);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
 
 
                         break;
                     case TextViewFloating :
-                        String count = String.valueOf(msg.obj);
-                        if(count.equals("0")){
-                            tv_floating_count.setVisibility(View.GONE);
-                            fg_outGauge.setVisibility(View.GONE);
-                        }else{
-                            iv_floating_lock.setVisibility(View.GONE);
-                            tv_floating_count.setVisibility(View.VISIBLE);
-                            tv_floating_count.setText(count);
+                        try{
+                            String count = String.valueOf(msg.obj);
+                            if(count.equals("0")){
+                                tv_floating_count.setVisibility(View.GONE);
+                                fg_outGauge.setVisibility(View.GONE);
+                            }else{
+                                iv_floating_lock.setVisibility(View.GONE);
+                                tv_floating_count.setVisibility(View.VISIBLE);
+                                tv_floating_count.setText(count);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
+
 
                         break;
                     case AnimationFloating :
@@ -151,36 +163,69 @@ public class FloatingViewController {
                         break;
 
                     case UnTouchLockFloating :
-                        final Animation animTransTwits2 = AnimationUtils.loadAnimation(
-                                context,R.anim.animation_floating_unlock);
-                        rl_outfloatingLayout.startAnimation(animTransTwits2);
+                        try{
+                            final Animation animTransTwits2 = AnimationUtils.loadAnimation(
+                                    context,R.anim.animation_floating_unlock);
+                            rl_outfloatingLayout.startAnimation(animTransTwits2);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         break;
 
                     case GoneFloating :
-                        Dlog.e("GoneFloating");
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                iv_floating_lock.setVisibility(View.GONE);
-                                rl_outfloatingLayout.setVisibility(View.GONE);
-                                fg_outGauge.setVisibility(View.GONE);
-                                tv_floating_count.setVisibility(View.GONE);
-                                ll_floating.setVisibility(View.GONE);
-                            }
-                        });
+                        try{
+                            Dlog.e("GoneFloating");
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    iv_floating_lock.setVisibility(View.GONE);
+                                    rl_outfloatingLayout.setVisibility(View.GONE);
+                                    fg_outGauge.setVisibility(View.GONE);
+                                    tv_floating_count.setVisibility(View.GONE);
+                                    ll_floating.setVisibility(View.GONE);
+                                }
+                            });
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
 
                         break;
 
                     case VisibleFloating :
-                        Dlog.e("VisibleFloating");
-                        iv_floating_lock.setVisibility(View.VISIBLE);
-                        iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_unlock,null));
-                        rl_outfloatingLayout.setVisibility(View.VISIBLE);
-                        ll_floating.setVisibility(View.VISIBLE);
-                        fg_outGauge.setVisibility(View.GONE);
-                        tv_floating_count.setVisibility(View.GONE);
+                        try{
+                            Dlog.e("VisibleFloating");
+                            iv_floating_lock.setVisibility(View.VISIBLE);
+                            iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_unlock,null));
+                            rl_outfloatingLayout.setVisibility(View.VISIBLE);
+                            ll_floating.setVisibility(View.VISIBLE);
+                            fg_outGauge.setVisibility(View.GONE);
+                            tv_floating_count.setVisibility(View.GONE);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         break;
 
+                    case StartGIF :
+                        try{
+                            iv_gifImage.setBackground(context.getResources().getDrawable((int)msg.obj,null));
+                            final AnimationDrawable animationDrawable = (AnimationDrawable)iv_gifImage.getBackground();
+                            animationDrawable.start();
+                            iv_gifImage.setVisibility(View.VISIBLE);
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    animationDrawable.stop();
+                                    iv_gifImage.setVisibility(View.GONE);
+                                }
+                            },5000);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        break;
                 }
                 return true;
             }
@@ -229,7 +274,7 @@ public class FloatingViewController {
                                     });
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
-                                    WebViewFragment.startGif(context,R.drawable.change_image_sleep);
+                                    startGif(R.drawable.change_image_sleep);
                                 }
                                 break;
                             case 6 :
@@ -298,6 +343,17 @@ public class FloatingViewController {
         try{
             if(floatingHandler!= null){
                 floatingHandler.obtainMessage(UnTouchLockFloating,null).sendToTarget();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void startGif(int drawable){
+        try{
+            if(floatingHandler != null){
+                floatingHandler.obtainMessage(StartGIF,drawable).sendToTarget();
             }
         }catch (Exception e){
             e.printStackTrace();

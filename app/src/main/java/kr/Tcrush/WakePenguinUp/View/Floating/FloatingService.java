@@ -43,6 +43,7 @@ import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 public class FloatingService extends Service implements View.OnClickListener, View.OnTouchListener {
 
     private WindowManager.LayoutParams mParams;
+    private WindowManager.LayoutParams gifParams;
     private WindowManager mWindowManager;
     private float START_X, START_Y;
     private int PREV_X, PREV_Y;
@@ -53,8 +54,10 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
     private static LinearLayout ll_floating;
     private static ImageView iv_floating_lock;
     private static RelativeLayout rl_outFloatingLayout;
+    private static ImageView iv_gifImage;
 
     private static CoordinatorLayout out_coordinatorLayout;
+    private static CoordinatorLayout out_gifLayout;
     public static android.app.NotificationManager notification_Manager;
 
 
@@ -87,16 +90,31 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
             out_coordinatorLayout.getViewTreeObserver().addOnWindowFocusChangeListener(onWindowFocusChangeListener);
             out_coordinatorLayout.setStatusBarBackgroundColor(getBaseContext().getResources().getColor(R.color.blank));
 
+            out_gifLayout = (CoordinatorLayout) LayoutInflater
+                    .from(ctx)
+                    .inflate(R.layout.service_gif, null);
+            out_gifLayout.getViewTreeObserver().addOnWindowFocusChangeListener(onWindowFocusChangeListener);
+            out_gifLayout.setStatusBarBackgroundColor(getBaseContext().getResources().getColor(R.color.blank));
+
 
             fg_outGauge = out_coordinatorLayout.findViewById(R.id.fg_floating_count);
             tv_floating_count = out_coordinatorLayout.findViewById(R.id.tv_floating_count);
             ll_floating = out_coordinatorLayout.findViewById(R.id.ll_floating);
             iv_floating_lock = out_coordinatorLayout.findViewById(R.id.iv_floating_lock);
             rl_outFloatingLayout = out_coordinatorLayout.findViewById(R.id.rl_outfloatingLayout);
+            iv_gifImage = out_gifLayout.findViewById(R.id.iv_gifImage);
             rl_outFloatingLayout.setOnClickListener(this);
             rl_outFloatingLayout.setOnTouchListener(this);
 
-            new FloatingViewController().initHandler(getBaseContext(),tv_floating_count,ll_floating,iv_floating_lock,fg_outGauge, rl_outFloatingLayout);
+            if(MainActivity.TouchLockFlag){
+                fg_outGauge.setVisibility(View.GONE);
+                tv_floating_count.setVisibility(View.GONE);
+                ll_floating.setVisibility(View.GONE);
+                iv_floating_lock.setVisibility(View.GONE);
+                rl_outFloatingLayout.setVisibility(View.GONE);
+            }
+
+            new FloatingViewController().initHandler(getBaseContext(),tv_floating_count,ll_floating,iv_floating_lock,fg_outGauge, rl_outFloatingLayout,iv_gifImage);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 mParams = new WindowManager.LayoutParams(
                         WindowManager.LayoutParams.WRAP_CONTENT,
@@ -113,6 +131,23 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
                         PixelFormat.TRANSLUCENT);
             }
             mParams.gravity = Gravity.LEFT | Gravity.TOP;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                gifParams = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                        PixelFormat.TRANSLUCENT);
+            }else {
+                gifParams = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                        PixelFormat.TRANSLUCENT);
+            }
+            gifParams.gravity = Gravity.RIGHT | Gravity.BOTTOM;
 
             int settingX = settingXY.getInt("settingX",-1);
             int settingY = settingXY.getInt("settingY",-1);
@@ -141,6 +176,7 @@ public class FloatingService extends Service implements View.OnClickListener, Vi
 
             mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
             if (mWindowManager != null) {
+                mWindowManager.addView(out_gifLayout,gifParams);
                 mWindowManager.addView(out_coordinatorLayout, mParams);
             }
 

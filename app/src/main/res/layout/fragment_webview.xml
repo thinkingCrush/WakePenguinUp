@@ -149,13 +149,7 @@
 
     </LinearLayout>
 
-    <ImageView
-            android:id="@+id/iv_gifImage"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="bottom|right"
-            android:visibility="gone"
-            android:layout_marginRight="10dp"/>
+
 
 
 
