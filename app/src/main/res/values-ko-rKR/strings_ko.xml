@@ -26,4 +26,11 @@
     <string name="message_07">URL 주소 입력</string>
     <string name="init_shortcuts">바</string>
 
+    <string name="webview_help_1">URL 주소 입력</string>
+    <string name="webview_help_2">바로가기 이름</string>
+    <string name="webview_help_3">바로가기 추가</string>
+    <string name="webview_help_4">바로가기 목록</string>
+    <string name="webview_help_5">터치 잠금 버튼</string>
+    <string name="webview_help_main">Wake Penguin Up\n사용방법!</string>
+
 </resources>

@@ -7,6 +7,7 @@
         android:layout_height="match_parent"
         app:ignore="NamespaceTypo">
 
+
     <LinearLayout
             android:id="@+id/ll_webviewPage"
             android:layout_width="match_parent"
@@ -15,7 +16,7 @@
         <LinearLayout
                 android:id="@+id/ll_webToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="5dp"
                 android:paddingBottom="5dp"
@@ -150,6 +151,166 @@
 
     </LinearLayout>
 
+
+    <FrameLayout
+            android:id="@+id/fl_helpLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal">
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="8"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="7dp"
+                    android:background="@drawable/background_dot">
+
+            </LinearLayout>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/background_dot_circle">
+
+            </LinearLayout>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/background_dot_circle">
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="45dp"
+                android:orientation="vertical">
+
+            <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/img_arrow_1"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/webview_help_1"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:textColor="#ffffff"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="65dp"
+                android:layout_marginTop="35dp"
+                android:gravity="center|right"
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/webview_help_3"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:layout_marginRight="5dp"
+                    android:textColor="#ffffff"/>
+            <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="right"
+                    android:src="@drawable/img_arrow_2"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="50dp"
+                android:gravity="center|right"
+                android:layout_gravity="right"
+                android:orientation="vertical">
+            <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="right"
+                    android:src="@drawable/img_arrow_3"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/webview_help_2"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:layout_marginRight="5dp"
+                    android:textColor="#ffffff"/>
+        </LinearLayout>
+
+        <TextView
+                android:layout_width="250dp"
+                android:layout_height="130dp"
+                android:text="@string/webview_help_main"
+                android:background="#494949"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:maxLines="2"
+                android:textColor="#ffffff"/>
+
+        <LinearLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="22dp"
+                android:layout_gravity="bottom|center"
+                android:background="@drawable/background_dot_circle">
+
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="110dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="top|left"
+                android:layout_gravity="bottom|center"
+                android:orientation="horizontal">
+            <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="right"
+                    android:src="@drawable/img_arrow_4"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/webview_help_5"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:maxLines="2"
+                    android:textColor="#ffffff"/>
+
+        </LinearLayout>
+
+
+    </FrameLayout>
 
 
 

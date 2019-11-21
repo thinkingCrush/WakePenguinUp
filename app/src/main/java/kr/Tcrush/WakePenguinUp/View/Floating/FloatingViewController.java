@@ -21,6 +21,7 @@ import java.util.TimerTask;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
+import kr.Tcrush.WakePenguinUp.Tool.SoundPlay;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.Tool.WebViewController;
 import kr.Tcrush.WakePenguinUp.View.WebViewFragment;
@@ -258,6 +259,7 @@ public class FloatingViewController {
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                     startGif(R.drawable.change_image_sleep);
+                                    new SoundPlay().playSound(context);
                                 }
                                 break;
                             case 6 :

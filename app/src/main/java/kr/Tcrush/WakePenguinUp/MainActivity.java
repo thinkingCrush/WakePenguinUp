@@ -46,6 +46,7 @@ import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
+import kr.Tcrush.WakePenguinUp.Tool.SoundPlay;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         initView();
         CheckPermission.checkPermission(this);
         initTouchListener();
-
     }
 
 

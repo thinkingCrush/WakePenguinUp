@@ -26,6 +26,11 @@
     <string name="message_07">Enter URL address</string>
     <string name="init_shortcuts">S</string>
 
-
+    <string name="webview_help_1">Enter the URL address</string>
+    <string name="webview_help_2">Name of shortcut</string>
+    <string name="webview_help_3">Add a shortcut</string>
+    <string name="webview_help_4">Shortcuts list</string>
+    <string name="webview_help_5">Touch lock\nbutton</string>
+    <string name="webview_help_main">How to use WPU</string>
 
 </resources>
