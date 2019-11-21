@@ -120,7 +120,22 @@ public class SharedWPU {
         return null;
     }
 
-    private void randomColor(){
+
+    public boolean getFirstWebView(Context context){
+        SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+        return firstUser.getBoolean("FirstWebView",false);
+
+    }
+    public void setFirstWebView(Context context){
+
+        try{
+            SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = firstUser.edit();
+            editor.putBoolean("FirstWebView",true);
+            editor.apply();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

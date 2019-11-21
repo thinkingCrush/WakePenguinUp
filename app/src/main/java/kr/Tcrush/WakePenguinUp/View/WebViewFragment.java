@@ -61,6 +61,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     TextView tv_error_message ;
     ImageView iv_textCancel;
     LinearLayout ll_webviewPage;
+    FrameLayout fl_helpLayout;
 
 
     static AdvancedWebView wv_webview;
@@ -265,6 +266,22 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
 
         pb_webProgressbar = view.findViewById(R.id.pb_webProgressbar);
+
+        if(!new SharedWPU().getFirstWebView(getContext())){
+            fl_helpLayout = view.findViewById(R.id.fl_helpLayout);
+            fl_helpLayout.setVisibility(View.VISIBLE);
+            fl_helpLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try{
+                        new SharedWPU().setFirstWebView(getContext());
+                        fl_helpLayout.setVisibility(View.GONE);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
 
 
 
