@@ -529,7 +529,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                     urlArrays = new SharedWPU().getUrlArrayList(getContext());
                     for(int i = 0; i < urlArrays.size() ; i++){
                         if(urlArrays.get(i).url.equals(et_url.getText().toString())){
-                            new DialogSupport().editItemDialog(getContext(),urlArrays,i);
+                            new DialogSupport().editItemDialog(getContext(),urlArrays,i,false);
                             break;
                         }
                     }

@@ -13,9 +13,17 @@ public class DialogSupport {
     private static DialogManager.addItemDialog addItemDialog;
     public void addItemDialog(Context context, String url){
         try{
-            addItemDialog = new DialogManager.addItemDialog(context,randomColor(),url );
+            if(addItemDialog!=null){
+                if(!addItemDialog.isShowing()){
+                    addItemDialog = new DialogManager.addItemDialog(context,randomColor(),url );
+                    addItemDialog.show();
+                }
+            }else{
+                addItemDialog = new DialogManager.addItemDialog(context,randomColor(),url );
+                addItemDialog.show();
+            }
 
-            addItemDialog.show();
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -23,10 +31,19 @@ public class DialogSupport {
     }
 
     private static DialogManager.editItemDialog editItemDialog ;
-    public void editItemDialog (Context context, ArrayList<UrlArray> urlArrays, int itemPosition){
+    public void editItemDialog (Context context, ArrayList<UrlArray> urlArrays, int itemPosition, boolean urlFragment){
         try{
-            editItemDialog = new DialogManager.editItemDialog(context,urlArrays,itemPosition);
-            editItemDialog.show();
+
+            if(editItemDialog != null){
+                if(!editItemDialog.isShowing()){
+                    editItemDialog = new DialogManager.editItemDialog(context,urlArrays,itemPosition,urlFragment);
+                    editItemDialog.show();
+                }
+            }else{
+                editItemDialog = new DialogManager.editItemDialog(context,urlArrays,itemPosition,urlFragment);
+                editItemDialog.show();
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -36,9 +53,17 @@ public class DialogSupport {
     private static DialogManager.urlList_addItemDialog urlList_addItemDialog;
     public void urlList_addItemDialog(Context context, String url){
         try{
-            urlList_addItemDialog = new DialogManager.urlList_addItemDialog(context,randomColor(),url);
+            if(urlList_addItemDialog != null){
+                if(!urlList_addItemDialog.isShowing()){
+                    urlList_addItemDialog = new DialogManager.urlList_addItemDialog(context,randomColor(),url);
+                    urlList_addItemDialog.show();
+                }
+            }else{
+                urlList_addItemDialog = new DialogManager.urlList_addItemDialog(context,randomColor(),url);
+                urlList_addItemDialog.show();
+            }
 
-            urlList_addItemDialog.show();
+
         }catch (Exception e){
             e.printStackTrace();
         }

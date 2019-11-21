@@ -200,13 +200,14 @@ public class DialogManager  extends AlertDialog.Builder {
         int itemPosition;
         ArrayList<UrlArray> urlArrays;
 
-        public editItemDialog(@NonNull Context context,ArrayList<UrlArray> urlArrays , int itemPosition ) {
+        boolean urlFragment;
+        public editItemDialog(@NonNull Context context,ArrayList<UrlArray> urlArrays , int itemPosition , boolean urlFragment) {
             super(context);
 
             this.context = context;
             this.urlArrays = urlArrays;
             this.itemPosition = itemPosition;
-
+            this.urlFragment = urlFragment;
         }
 
         @Override
@@ -214,7 +215,10 @@ public class DialogManager  extends AlertDialog.Builder {
             super.onDetachedFromWindow();
             Dlog.e("test 2222");
             //MainActivity.startService(context);
-            MainActivity.visibleFloating();
+            if(!urlFragment){
+                MainActivity.visibleFloating();
+            }
+
         }
 
         @Override

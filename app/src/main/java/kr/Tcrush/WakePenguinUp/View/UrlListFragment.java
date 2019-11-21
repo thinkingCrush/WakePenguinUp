@@ -201,22 +201,12 @@ public class UrlListFragment extends Fragment {
                         case MenuItem.DIRECTION_RIGHT :
                             switch (buttonPosition){
                                 case 0 : // 삭제
-                                    urlArrays.remove(itemPosition);
-                                    new SharedWPU().setUrlArrayList(getContext(),urlArrays);
-                                    MainActivity.listRefresh(getContext());
-                                    if(urlArrays != null && !urlArrays.isEmpty()){
-                                        listViewVisible();
-                                        sd_urlEditList.deferNotifyDataSetChanged();
-                                        BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
-                                        sd_urlEditList.setAdapter(urlArrayList);
-                                    }else{
-                                        listViewEmpty(getContext());
-                                    }
+
 
 
                                     return Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP ;
                                 case 1 : // 수정
-                                    new DialogSupport().editItemDialog(getContext(),urlArrays,itemPosition);
+                                    new DialogSupport().editItemDialog(getContext(),urlArrays,itemPosition,true);
                                     return Menu.ITEM_NOTHING;
                             }
                             break;
@@ -224,6 +214,23 @@ public class UrlListFragment extends Fragment {
                             return Menu.ITEM_NOTHING;
                     }
                     return Menu.ITEM_NOTHING;
+                }
+            });
+
+            sd_urlEditList.setOnItemDeleteListener(new SlideAndDragListView.OnItemDeleteListener() {
+                @Override
+                public void onItemDeleteAnimationFinished(View view, int position) {
+                    urlArrays.remove(position);
+                    new SharedWPU().setUrlArrayList(getContext(),urlArrays);
+                    MainActivity.listRefresh(getContext());
+                    if(urlArrays != null && !urlArrays.isEmpty()){
+                        listViewVisible();
+                        sd_urlEditList.deferNotifyDataSetChanged();
+                        BaseAdapter urlArrayList = new UrlListViewAdapter(getContext(),urlArrays);
+                        sd_urlEditList.setAdapter(urlArrayList);
+                    }else{
+                        listViewEmpty(getContext());
+                    }
                 }
             });
 
