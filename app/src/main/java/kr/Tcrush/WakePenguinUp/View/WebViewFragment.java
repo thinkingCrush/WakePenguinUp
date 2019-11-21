@@ -212,28 +212,14 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
         WebViewClient mWebViewClient = new WebViewClient() {
 
-            /*@Override
-            public void onPageFinished(WebView view, String url) {
-                try{
-                    pb_webProgressbar.setVisibility(View.GONE);
-                    if(url.contains("about:blank")){
-                        et_url.setText("");
-                    }else{
-                        et_url.setText(view.getUrl());
-                    }
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                view.loadUrl("javascript:window.android.onUrlChange(window.location.href);");
-            }*/
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 try{
                     pb_webProgressbar.setVisibility(View.VISIBLE);
-                    if(et_url!=null && !url.equals("about:blank")) {
+                    Dlog.e("onPageStarted url : " + url);
+                    if(et_url!=null && !url.equals("about:blank") && !url.equals("https://") && !url.equals("http://")) {
                         if (checkStar(getContext(),url)) {
                             iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star, null));
                         } else {
@@ -242,7 +228,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         webViewVisible();
                     }else{
                         iv_star.setImageDrawable(Objects.requireNonNull(getContext()).getResources().getDrawable(R.drawable.icon_star_off, null));
-                        urlFindFailError();
+                        urlFindFailError(getContext().getResources().getString(R.string.message_01));
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -256,7 +242,8 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
         try{
             if(urlArrays != null && !urlArrays.isEmpty()){
-                loadUrl(getContext(),urlArrays.get(0).url);
+                String url = urlArrays.get(0).url;
+                loadUrl(getContext(),url);
             }else{
                 if(lastPage != null ){
                     loadUrl(getContext(),lastPage);
@@ -328,6 +315,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
                     switch (msg.what){
                         case WebViewFlag :
+                            Dlog.e("test WebViewFlag");
                             //MainActivity.startService(MainActivity.mainContext);
                             MainActivity.visibleFloating();
                             wv_webview.setVisibility(View.VISIBLE);
@@ -336,6 +324,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             iv_noneWebView.setVisibility(View.GONE);
                             break;
                         case ImageUnknownFlag :
+                            Dlog.e("test ImageUnknownFlag");
                             wv_webview.setVisibility(View.GONE);
                             rl_webview_error.setVisibility(View.VISIBLE);
                             tv_error_message.setVisibility(View.VISIBLE);
@@ -345,12 +334,19 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                             MainActivity.checkSidebar(true);
                             break;
                         case ImageErrorFlag :
+                            Dlog.e("test ImageErrorFlag");
                             wv_webview.setVisibility(View.GONE);
                             rl_webview_error.setVisibility(View.VISIBLE);
                             tv_error_message.setVisibility(View.VISIBLE);
                             iv_noneWebView.setVisibility(View.VISIBLE);
                             iv_noneWebView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_unknown_url,null));
-                            tv_error_message.setText(getContext().getResources().getString(R.string.message_04));
+                            String message = String.valueOf(msg.obj);
+                            if(!message.equals("")){
+                                tv_error_message.setText(message);
+                            }else{
+                                tv_error_message.setText(getContext().getResources().getString(R.string.message_04));
+                            }
+
                             break;
                     }
 
@@ -372,9 +368,10 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             viewImageHandler.obtainMessage(ImageUnknownFlag,null).sendToTarget();
         }
     }
-    public void urlFindFailError(){
+    public void urlFindFailError(String message){
+        Dlog.e("test 1111");
         if(viewImageHandler != null){
-            viewImageHandler.obtainMessage(ImageErrorFlag,null).sendToTarget();
+            viewImageHandler.obtainMessage(ImageErrorFlag,message).sendToTarget();
         }
     }
 
@@ -493,7 +490,12 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                         wv_webview.loadUrl(url);
                         et_url.setText(checkUrlText(url));
                         lastPage = url;
-                        webViewVisible();
+                        if(url.equals("http://") || url.equals("https://")){
+                            urlFindFailError(getContext().getResources().getString(R.string.message_01));
+                        }else{
+                            webViewVisible();
+                        }
+
                         return true;
                     }
                 }
@@ -501,7 +503,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         } catch (Exception e) {
             e.printStackTrace();
         }
-        urlFindFailError();
+        urlFindFailError(null);
         return false;
     }
 
@@ -593,7 +595,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
         Dlog.e("pageError!!!!!!");
-        urlFindFailError();
+        urlFindFailError(getContext().getResources().getString(R.string.message_01));
 
     }
 

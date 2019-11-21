@@ -213,7 +213,6 @@ public class DialogManager  extends AlertDialog.Builder {
         @Override
         public void onDetachedFromWindow() {
             super.onDetachedFromWindow();
-            Dlog.e("test 2222");
             //MainActivity.startService(context);
             if(!urlFragment){
                 MainActivity.visibleFloating();
