@@ -34,8 +34,8 @@
     <string name="webview_help_main">How to use WPU</string>
 
     <string name="popup_timer_title">Timer setting</string>
-    <string name="popup_timer_message">Automatically close the app\non the timer you set.</string>
-    <string name="popup_timer_finish">Close the app\non the timer you set.</string>
-    <string name="popup_timer_alarm">The app will close after\n%1$d hour and %1$d minutes.</string>
+    <string name="popup_timer_message">Automatically close the app\non the timer set</string>
+    <string name="popup_timer_finish">Close the app\non the timer set</string>
+    <string name="popup_timer_alarm">The app will close after\n%1$d hour and %2$d minutes</string>
 
 </resources>
