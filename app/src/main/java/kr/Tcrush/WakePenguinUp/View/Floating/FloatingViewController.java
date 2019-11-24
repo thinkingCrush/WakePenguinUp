@@ -1,5 +1,6 @@
 package kr.Tcrush.WakePenguinUp.View.Floating;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
@@ -15,12 +16,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
+import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.Tool.SoundPlay;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.Tool.WebViewController;
@@ -57,12 +60,17 @@ public class FloatingViewController {
     public final int GoneFloating = 7;
     public final int VisibleFloating = 8;
     public final int StartGIF = 9;
+    public final int TimerText = 10;
+    public final int FinishText = 11;
 
 
     private static int gaugeValue = 0;
     private static Timer gaugeTimer = null;
     public void initHandler(final Context context, final TextView tv_floating_count, final LinearLayout ll_floating,
-                            final ImageView iv_floating_lock , final FloatingGauge fg_outGauge, final RelativeLayout rl_outfloatingLayout, final ImageView iv_gifImage){
+                            final ImageView iv_floating_lock , final FloatingGauge fg_outGauge,
+                            final RelativeLayout rl_outfloatingLayout,
+                            final ImageView iv_gifImage,
+                            final TextView tv_timerText){
         floatingHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
@@ -210,6 +218,42 @@ public class FloatingViewController {
                         }
 
                         break;
+
+                    case TimerText :
+                        try{
+                            tv_timerText.setVisibility(View.INVISIBLE);
+                            tv_timerText.setText(String.valueOf(msg.obj));
+                            tv_timerText.setVisibility(View.VISIBLE);
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv_timerText.setVisibility(View.GONE);
+                                }
+                            },5000);
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        break;
+
+                    case FinishText :
+                        try{
+                            tv_timerText.setVisibility(View.INVISIBLE);
+                            tv_timerText.setText(String.valueOf(msg.obj));
+                            tv_timerText.setVisibility(View.VISIBLE);
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv_timerText.setVisibility(View.GONE);
+                                }
+                            },2500);
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        break;
                 }
                 return true;
             }
@@ -259,6 +303,26 @@ public class FloatingViewController {
                                     floatingHandler.obtainMessage(TextViewFloating,"0").sendToTarget();
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                     startGif(R.drawable.change_image_sleep);
+                                    //몇분 후 종료됩니다.
+                                    try{
+                                        String hourMin = new SharedWPU().getAlarmTime(context);
+                                        int hour = Integer.parseInt(hourMin.split("/")[0])*60;
+                                        int min = Integer.parseInt(hourMin.split("/")[1]);
+                                        if(checkKorea(context)){
+                                            if(hour == 0){
+                                                timerText(String.valueOf(min)+"분 "+context.getResources().getString(R.string.popup_timer_alarm));
+                                            }else{
+                                                timerText(String.valueOf(hour)+"시간 "+String.valueOf(min)+"분 "+context.getResources().getString(R.string.popup_timer_alarm));
+                                            }
+                                        }else{
+                                            @SuppressLint({"StringFormatMatches", "StringFormatInvalid", "LocalSuppress"}) String message = String.format(context.getResources().getString(R.string.popup_timer_alarm),hour,min);
+                                            timerText(message);
+                                        }
+
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+
                                     new SoundPlay().playSound(context);
                                 }
                                 break;
@@ -344,6 +408,48 @@ public class FloatingViewController {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void timerText (String message){
+        try{
+            if(floatingHandler != null){
+                floatingHandler.obtainMessage(TimerText,message).sendToTarget();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void finishText (String message){
+        try{
+            if(floatingHandler != null){
+                floatingHandler.obtainMessage(FinishText,message).sendToTarget();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkKorea (Context context){
+        try{
+            Locale locale = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                locale = context.getResources().getConfiguration().getLocales().get(0);
+            }else{
+                locale = context.getResources().getConfiguration().locale;
+            }
+
+            if(locale!= null){
+                String country = locale.getCountry();
+                if(country.equals("KR")){
+                    return true;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
 

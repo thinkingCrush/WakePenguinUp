@@ -451,9 +451,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //hour -> ms
                 //min -> ms
 
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                finishTimer = new Timer();
+                finishTimer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
+                        new FloatingViewController().finishText(mainContext.getResources().getString(R.string.popup_timer_finish));
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -462,10 +464,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 finishAffinity();
                                 System.runFinalization();
                                 System.exit(0);
+                                finishTimer.cancel();
+                                finishTimer = null;
                             }
-                        },1000);
+                        },3000);
                     }
-                },hour+min);
+                },hour+min,hour+min);
 
 
             }
@@ -485,6 +489,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             new FloatingViewController().floatingVisible();
             new FloatingViewController().wakeUpAnimation();
             new FloatingViewController().startGif(R.drawable.change_image_wakeup);
+            if(finishTimer!=null){
+                finishTimer.cancel();
+                finishTimer = null;
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

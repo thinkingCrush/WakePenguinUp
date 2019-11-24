@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:fab="http://schemas.android.com/tools"
+        android:layout_gravity="center|top"
+        fab:ignore="MissingDefaultResource">
+
+    <TextView
+            android:id="@+id/tv_timerText"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="#99494949"
+            android:gravity="center"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center|top"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:maxLines="2"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textSize="20dp"/>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

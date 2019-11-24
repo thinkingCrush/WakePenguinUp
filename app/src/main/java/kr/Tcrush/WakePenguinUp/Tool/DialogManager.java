@@ -8,6 +8,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -491,12 +493,18 @@ public class DialogManager  extends AlertDialog.Builder {
         String hour;
         String min;
 
+        static int selectHour = 0;
+        static int selectMin = 0;
+
         public AlarmDialog(@NonNull Context context, String hour , String min ) {
             super(context);
 
             this.context = context;
             this.hour = hour;
             this.min = min;
+            selectHour = Integer.parseInt(hour);
+            selectMin = Integer.parseInt(min);
+
 
         }
 
@@ -511,6 +519,28 @@ public class DialogManager  extends AlertDialog.Builder {
             sw_timerOnOff = findViewById(R.id.sw_timerOnOff);
             tp_timerPicker = findViewById(R.id.tp_timerPicker);
             tp_timerPicker.setIs24HourView(true);
+            tp_timerPicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+                @Override
+                public void onTimeChanged(final TimePicker timePicker, int i, int i1) {
+                    selectHour = i;
+                    selectMin = i1;
+                    if(i == 0 && i1 == 0){
+                        try{
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(selectHour==0 && selectMin == 0){
+                                        timePicker.setMinute(1);
+                                    }
+                                }
+                            },500);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            });
 
             try{
                 tp_timerPicker.setHour(Integer.parseInt(hour));
