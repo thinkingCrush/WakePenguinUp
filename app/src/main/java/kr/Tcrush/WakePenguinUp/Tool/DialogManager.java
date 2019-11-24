@@ -17,7 +17,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 
@@ -444,6 +446,93 @@ public class DialogManager  extends AlertDialog.Builder {
                     UrlListFragment.listRefresh(context);
                     UrlListFragment.setUrlArrays(context);
                     WebViewFragment.setStar(context);
+                    dismiss();
+                }
+            });
+            btn_dialogNagative = findViewById(R.id.btn_dialogNagative);
+            btn_dialogNagative.setOnTouchListener(new DialogButtonClickEffect());
+            btn_dialogNagative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+
+
+            Window window = getWindow();
+            if( window != null ) {
+                // 백그라운드 투명
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                WindowManager.LayoutParams params = window.getAttributes();
+                // 화면에 가득 차도록
+                params.width         = WindowManager.LayoutParams.MATCH_PARENT;
+                params.height        = WindowManager.LayoutParams.MATCH_PARENT;
+
+                // 열기&닫기 시 애니메이션 설정
+                params.windowAnimations = R.style.AnimationPopupStyle;
+                window.setAttributes( params );
+                window.setGravity( Gravity.BOTTOM );
+            }
+        }
+    }
+
+    public static class AlarmDialog extends Dialog {
+        Context context;
+
+        Switch sw_timerOnOff;
+        TimePicker tp_timerPicker;
+
+        static Button btn_dialogPositive;
+        static Button btn_dialogNagative;
+
+
+        String hour;
+        String min;
+
+        public AlarmDialog(@NonNull Context context, String hour , String min ) {
+            super(context);
+
+            this.context = context;
+            this.hour = hour;
+            this.min = min;
+
+        }
+
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setContentView(R.layout.dialog_alarm);
+
+
+            sw_timerOnOff = findViewById(R.id.sw_timerOnOff);
+            tp_timerPicker = findViewById(R.id.tp_timerPicker);
+            tp_timerPicker.setIs24HourView(true);
+
+            try{
+                tp_timerPicker.setHour(Integer.parseInt(hour));
+                tp_timerPicker.setMinute(Integer.parseInt(min));
+            }catch (Exception e){
+                tp_timerPicker.setHour(0);
+                tp_timerPicker.setMinute(1);
+                e.printStackTrace();
+            }
+
+
+            boolean alarmEnable = new SharedWPU().getAlarm(context);
+            sw_timerOnOff.setChecked(alarmEnable);
+
+
+            btn_dialogPositive = findViewById(R.id.btn_dialogPositive);
+            btn_dialogPositive.setOnTouchListener(new DialogButtonClickEffect());
+            btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new SharedWPU().setAlarm(context,sw_timerOnOff.isChecked());
+                    new SharedWPU().setAlarmTime(context,String.valueOf(tp_timerPicker.getHour()), String.valueOf(tp_timerPicker.getMinute()));
                     dismiss();
                 }
             });

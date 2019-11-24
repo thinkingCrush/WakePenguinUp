@@ -53,6 +53,8 @@ public class SharedWPU {
 
 
 
+
+
     public ArrayList<UrlArray> getUrlArrayList(Context context){
         try{
             SharedPreferences urlArray =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
@@ -132,6 +134,41 @@ public class SharedWPU {
             SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = firstUser.edit();
             editor.putBoolean("FirstWebView",true);
+            editor.apply();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public String getAlarmTime(Context context){
+        SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+        return firstUser.getString("AlarmTime","0/1");
+
+    }
+    public void setAlarmTime(Context context,String hour,String min){
+
+        try{
+            SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = firstUser.edit();
+            String putData = String.valueOf(hour)+"/"+String.valueOf(min);
+            editor.putString("AlarmTime",putData);
+            editor.apply();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public boolean getAlarm(Context context){
+        SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+        return firstUser.getBoolean("Alarm",false);
+
+    }
+    public void setAlarm(Context context,boolean alarmEnable){
+
+        try{
+            SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = firstUser.edit();
+            editor.putBoolean("Alarm",alarmEnable);
             editor.apply();
         }catch (Exception e){
             e.printStackTrace();

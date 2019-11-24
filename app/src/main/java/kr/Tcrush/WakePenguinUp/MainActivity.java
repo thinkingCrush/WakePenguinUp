@@ -41,9 +41,13 @@ import com.yydcdut.sdlv.SlideAndDragListView;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
+import kr.Tcrush.WakePenguinUp.Tool.DialogManager;
+import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
 import kr.Tcrush.WakePenguinUp.Tool.SoundPlay;
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static RelativeLayout drawerContainer;
     static TextView tv_emptySide;
     ImageView iv_sideListEdit ;
+    ImageView iv_editTimer;
 
     public static Context mainContext;
 
@@ -306,11 +311,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         iv_sideListEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDrawerLayout.closeDrawer(drawerContainer);mDrawerLayout.closeDrawer(drawerContainer);
+                mDrawerLayout.closeDrawer(drawerContainer);
                 mainChangeMenu(new UrlListFragment(),"Right");
                 //finishService(getBaseContext());
                 MainActivity.stopFloating();
 
+            }
+        });
+
+        iv_editTimer = findViewById(R.id.iv_editTimer);
+        iv_editTimer.setOnTouchListener(new ViewClickEffect());
+        iv_editTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.closeDrawer(drawerContainer);
+                MainActivity.stopFloating();
+
+                //Dialog 가 생성되야함.
+                new DialogSupport().alarmDialog(MainActivity.this);
             }
         });
         initDrawerListView();
@@ -417,14 +435,45 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * */
 
     public static boolean TouchLockFlag = false;
+    private static Timer finishTimer = null;
     public void touchLock(){
         try{
             Dlog.e("touch Lock");
             TouchLockFlag = true;
             registerTouch();
+
+            boolean isFinishTimer = new SharedWPU().getAlarm(mainContext);
+            if(isFinishTimer){
+                String timerTime = new SharedWPU().getAlarmTime(mainContext);
+                int hour = Integer.parseInt(timerTime.split("/")[0])*1000*60*60;
+                int min = Integer.parseInt(timerTime.split("/")[1])*1000*60;
+                Dlog.e("hour : " + hour + " , min : " + min);
+                //hour -> ms
+                //min -> ms
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Dlog.e("Timer Finish!!");
+                                stopFloatingBackPressed(getBaseContext());
+                                finishAffinity();
+                                System.runFinalization();
+                                System.exit(0);
+                            }
+                        },1000);
+                    }
+                },hour+min);
+
+
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
 
     }
 

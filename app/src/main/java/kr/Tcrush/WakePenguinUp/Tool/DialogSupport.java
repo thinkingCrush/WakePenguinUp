@@ -70,6 +70,31 @@ public class DialogSupport {
 
     }
 
+    private static DialogManager.AlarmDialog alarmDialog;
+    public void alarmDialog(Context context){
+        try{
+            String hour = null;
+            String min = null;
+            String hourMin = new SharedWPU().getAlarmTime(context);
+            hour = hourMin.split("/")[0];
+            min = hourMin.split("/")[1];
+            if(alarmDialog != null){
+                if(!alarmDialog.isShowing()){
+                    alarmDialog = new DialogManager.AlarmDialog(context,hour,min);
+                    alarmDialog.show();
+                }
+            }else{
+                alarmDialog = new DialogManager.AlarmDialog(context,hour,min);
+                alarmDialog.show();
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
     private String randomColor(){
         try{
             Random rnd = new Random();

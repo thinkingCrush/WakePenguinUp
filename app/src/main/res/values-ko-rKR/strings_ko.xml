@@ -33,4 +33,9 @@
     <string name="webview_help_5">터치 잠금 버튼</string>
     <string name="webview_help_main">Wake Penguin Up\n사용방법!</string>
 
+    <string name="popup_timer_title">타이머 설정</string>
+    <string name="popup_timer_message">설정하신 타이머에 맞춰 앱을\n자동으로 종료 시켜줍니다.</string>
+    <string name="popup_timer_finish">타이머 설정으로 \n앱을 종료합니다</string>
+    <string name="popup_timer_alarm">후\n 앱을 종료해요.</string>
+
 </resources>
