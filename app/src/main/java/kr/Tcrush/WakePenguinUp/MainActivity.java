@@ -12,10 +12,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
+import android.text.method.Touch;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -46,11 +49,9 @@ import java.util.TimerTask;
 
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
-import kr.Tcrush.WakePenguinUp.Tool.DialogManager;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
-import kr.Tcrush.WakePenguinUp.Tool.SoundPlay;
 import kr.Tcrush.WakePenguinUp.Tool.VibratorSupport;
 import kr.Tcrush.WakePenguinUp.Tool.ViewClickEffect;
 import kr.Tcrush.WakePenguinUp.View.Floating.FloatingService;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Dlog.e("MainActivity onCreate");
         setContentView(R.layout.activity_main);
         mainContext=getBaseContext();
         initFragment(getBaseContext());
@@ -136,18 +137,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static boolean isFloating = false;
 
     public static void startService(Context context){
-        Dlog.e("startService");
+        Dlog.e("startService isFloating : " + isFloating);
         try{
             if(!isFloating){
                 if(context != null){
-                    if(intent == null){
-                        intent = new Intent(context, FloatingService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if(Settings.canDrawOverlays(context) ){
+                            if(intent == null){
+                                intent = new Intent(context, FloatingService.class);
+                            }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                Objects.requireNonNull(context).startForegroundService(intent);
+                            }else {
+                                Objects.requireNonNull(context).startService(intent);
+                            }
+                        }
                     }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        Objects.requireNonNull(context).startForegroundService(intent);
-                    }else {
-                        Objects.requireNonNull(context).startService(intent);
-                    }
+
 
                 }
                 isFloating = true;
@@ -167,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onDestroy() {
         super.onDestroy();
         destroyFlag = true;
-        Dlog.e("onDestroy!!!!");
+        //Dlog.e("onDestroy!!!!");
         finishService(this);
     }
 
@@ -195,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static void finishService(final Context context){
         try{
-            Dlog.e("finishService");
+            Dlog.e("finishService touchLockFlag : " + TouchLockFlag);
             if(!TouchLockFlag){
                 if(context!=null){
                     if(isMyServiceRunning(context,FloatingService.class)){

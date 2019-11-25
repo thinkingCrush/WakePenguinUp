@@ -46,6 +46,7 @@ import im.delight.android.webview.AdvancedWebView;
 import kr.Tcrush.WakePenguinUp.Data.UrlArray;
 import kr.Tcrush.WakePenguinUp.MainActivity;
 import kr.Tcrush.WakePenguinUp.R;
+import kr.Tcrush.WakePenguinUp.Tool.CheckPermission;
 import kr.Tcrush.WakePenguinUp.Tool.DialogSupport;
 import kr.Tcrush.WakePenguinUp.Tool.Dlog;
 import kr.Tcrush.WakePenguinUp.Tool.SharedWPU;
@@ -84,7 +85,16 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
         MainActivity.setPageNum(PageNumber.WebViewFragment.ordinal());
         initView(view);
         initHandler();
+        CheckPermission.checkPermission(getContext());
         Dlog.e("onCreate");
+        ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
+        try{
+            if(urlArrays != null && !urlArrays.isEmpty()) {
+                MainActivity.startService(getContext());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return view;
     }
 
@@ -332,7 +342,6 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
 
                     switch (msg.what){
                         case WebViewFlag :
-                            Dlog.e("test WebViewFlag");
                             //MainActivity.startService(MainActivity.mainContext);
                             MainActivity.visibleFloating();
                             wv_webview.setVisibility(View.VISIBLE);
@@ -478,9 +487,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
             ArrayList<UrlArray> urlArrays = new SharedWPU().getUrlArrayList(getContext());
             try{
                 if(urlArrays != null && !urlArrays.isEmpty()) {
-                    Dlog.e("test 5555");
                     MainActivity.startService(getContext());
-                    //MainActivity.visibleFloating();
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -572,7 +579,7 @@ public class WebViewFragment extends Fragment implements View.OnClickListener, A
                 if(urlArrays!=null && !urlArrays.isEmpty()){
                     for(UrlArray urlArray : urlArrays){
                         String url = urlArray.url;
-                        Dlog.e("webViewUrl : " + webViewUrl + " , url : " + url);
+                        //Dlog.e("webViewUrl : " + webViewUrl + " , url : " + url);
                         currentUrl = currentUrl.replace("https://www.","");
                         currentUrl = currentUrl.replace("http://www.","");
                         currentUrl = currentUrl.replace("https://m.","");

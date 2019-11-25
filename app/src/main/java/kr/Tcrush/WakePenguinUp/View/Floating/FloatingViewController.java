@@ -186,13 +186,17 @@ public class FloatingViewController {
 
                     case VisibleFloating :
                         try{
-                            Dlog.e("VisibleFloating");
-                            iv_floating_lock.setVisibility(View.VISIBLE);
-                            iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_unlock,null));
-                            rl_outfloatingLayout.setVisibility(View.VISIBLE);
-                            ll_floating.setVisibility(View.VISIBLE);
-                            fg_outGauge.setVisibility(View.GONE);
-                            tv_floating_count.setVisibility(View.GONE);
+                            Dlog.e("VisibleFloating TouchLockFlag : " + MainActivity.TouchLockFlag);
+                            if(!MainActivity.TouchLockFlag){
+                                Dlog.e("test 1111");
+                                iv_floating_lock.setVisibility(View.VISIBLE);
+                                iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_unlock,null));
+                                rl_outfloatingLayout.setVisibility(View.VISIBLE);
+                                ll_floating.setVisibility(View.VISIBLE);
+                                fg_outGauge.setVisibility(View.GONE);
+                                tv_floating_count.setVisibility(View.GONE);
+                            }
+
                         }catch (Exception e){
                             e.printStackTrace();
                         }
