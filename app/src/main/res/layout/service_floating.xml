@@ -47,7 +47,7 @@
 
     </RelativeLayout>
 
-    <kr.Tcrush.WakePenguinUp.View.Floating.FloatingGauge
+    <kr.Thinkingcrush.WakePenguinUp.View.Floating.FloatingGauge
             android:id="@+id/fg_floating_count"
             android:layout_width="74dp"
             android:layout_height="74dp"
