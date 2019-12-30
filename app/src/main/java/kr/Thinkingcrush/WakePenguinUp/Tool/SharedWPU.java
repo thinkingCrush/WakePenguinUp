@@ -174,5 +174,22 @@ public class SharedWPU {
         }
     }
 
+    public int getSensor(Context context){
+        SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+        return firstUser.getInt("Sensor",3);
+
+    }
+    public void setSensor(Context context,int sensorValue){
+
+        try{
+            SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = firstUser.edit();
+            editor.putInt("Sensor",sensorValue);
+            editor.apply();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

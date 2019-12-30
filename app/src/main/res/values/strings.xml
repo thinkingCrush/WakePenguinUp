@@ -37,5 +37,12 @@
     <string name="popup_timer_message">Automatically close the app\non the timer set</string>
     <string name="popup_timer_finish">Close the app\non the timer set</string>
     <string name="popup_timer_alarm">The app will close after\n%1$d hour and %2$d minutes</string>
+    <string name="popup_sensor_title">Shake settings</string>
+    <string name="popup_sensor_message">Set the strength of the shake on unlock.</string>
+    <string name="popup_sensor_select1">Very weakly</string>
+    <string name="popup_sensor_select2">Weakly</string>
+    <string name="popup_sensor_select3">Normal</string>
+    <string name="popup_sensor_select4">Strongly</string>
+    <string name="popup_sensor_select5">Very strongly</string>
 
 </resources>

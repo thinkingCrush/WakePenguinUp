@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -591,6 +592,236 @@ public class DialogManager  extends AlertDialog.Builder {
                 params.windowAnimations = R.style.AnimationPopupStyle;
                 window.setAttributes( params );
                 window.setGravity( Gravity.BOTTOM );
+            }
+        }
+    }
+
+
+
+    public static class SensorDialog extends Dialog implements View.OnClickListener {
+        Context context;
+
+
+        TextView tv_sensorValue1,tv_sensorValue2,tv_sensorValue3,tv_sensorValue4,tv_sensorValue5;
+        static Button btn_dialogPositive;
+        static Button btn_dialogNagative;
+        int value = 0;
+
+        public SensorDialog(@NonNull Context context) {
+            super(context);
+
+            this.context = context;
+
+
+        }
+
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setContentView(R.layout.dialog_sensor);
+
+            tv_sensorValue1 = findViewById(R.id.tv_sensorValue1);
+            tv_sensorValue1.setOnClickListener(this);
+            tv_sensorValue2 = findViewById(R.id.tv_sensorValue2);
+            tv_sensorValue2.setOnClickListener(this);
+            tv_sensorValue3 = findViewById(R.id.tv_sensorValue3);
+            tv_sensorValue3.setOnClickListener(this);
+            tv_sensorValue4 = findViewById(R.id.tv_sensorValue4);
+            tv_sensorValue4.setOnClickListener(this);
+            tv_sensorValue5 = findViewById(R.id.tv_sensorValue5);
+            tv_sensorValue5.setOnClickListener(this);
+            initViewHandler();
+
+            int sensorValue = new SharedWPU().getSensor(context);
+            value = sensorValue;
+            switch (value){
+                case 1:
+                    select1();
+                    break;
+                case 2:
+                    select2();
+                    break;
+                case 3:
+                    select3();
+                    break;
+                case 4:
+                    select4();
+                    break;
+                case 5:
+                    select5();
+                    break;
+            }
+
+            btn_dialogPositive = findViewById(R.id.btn_dialogPositive);
+            btn_dialogPositive.setOnTouchListener(new DialogButtonClickEffect());
+            btn_dialogPositive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new SharedWPU().setSensor(context,value);
+                }
+            });
+            btn_dialogNagative = findViewById(R.id.btn_dialogNagative);
+            btn_dialogNagative.setOnTouchListener(new DialogButtonClickEffect());
+            btn_dialogNagative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+
+
+            Window window = getWindow();
+            if( window != null ) {
+                // 백그라운드 투명
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                WindowManager.LayoutParams params = window.getAttributes();
+                // 화면에 가득 차도록
+                params.width         = WindowManager.LayoutParams.MATCH_PARENT;
+                params.height        = WindowManager.LayoutParams.MATCH_PARENT;
+
+                // 열기&닫기 시 애니메이션 설정
+                params.windowAnimations = R.style.AnimationPopupStyle;
+                window.setAttributes( params );
+                window.setGravity( Gravity.BOTTOM );
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            try{
+                switch (v.getId()){
+                    case R.id.tv_sensorValue1 :
+                        value = 1;
+                        select1();
+                        break;
+                    case R.id.tv_sensorValue2 :
+                        value = 2;
+                        select2();
+                        break;
+                    case R.id.tv_sensorValue3 :
+                        value = 3;
+                        select3();
+                        break;
+                    case R.id.tv_sensorValue4 :
+                        value = 4;
+                        select4();
+                        break;
+                    case R.id.tv_sensorValue5 :
+                        value = 5;
+                        select5();
+                        break;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        private void select1(){
+            if(viewHandler!=null){
+                viewHandler.obtainMessage(1,null).sendToTarget();
+            }
+        }
+        private void select2(){
+            if(viewHandler!=null){
+                viewHandler.obtainMessage(2,null).sendToTarget();
+            }
+        }
+        private void select3(){
+            if(viewHandler!=null){
+                viewHandler.obtainMessage(3,null).sendToTarget();
+            }
+        }
+        private void select4(){
+            if(viewHandler!=null){
+                viewHandler.obtainMessage(4,null).sendToTarget();
+            }
+        }
+        private void select5(){
+            if(viewHandler!=null){
+                viewHandler.obtainMessage(5,null).sendToTarget();
+            }
+        }
+        private static Handler viewHandler ;
+        private void initViewHandler(){
+            try{
+                if(viewHandler == null){
+                    viewHandler = new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(@NonNull Message msg) {
+                            switch (msg.what){
+                                case 1 :
+                                    tv_sensorValue1.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_select,null));
+                                    tv_sensorValue2.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue3.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue4.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue5.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue1.setTextColor(context.getResources().getColor(R.color.defaultWhite,null));
+                                    tv_sensorValue2.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue3.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue4.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue5.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    break;
+                                case 2 :
+                                    tv_sensorValue1.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue2.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_select,null));
+                                    tv_sensorValue3.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue4.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue5.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue1.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue2.setTextColor(context.getResources().getColor(R.color.defaultWhite,null));
+                                    tv_sensorValue3.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue4.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue5.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    break;
+                                case 3 :
+                                    tv_sensorValue1.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue2.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue3.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_select,null));
+                                    tv_sensorValue4.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue5.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue1.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue2.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue3.setTextColor(context.getResources().getColor(R.color.defaultWhite,null));
+                                    tv_sensorValue4.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue5.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    break;
+                                case 4 :
+                                    tv_sensorValue1.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue2.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue3.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue4.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_select,null));
+                                    tv_sensorValue5.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue1.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue2.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue3.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue4.setTextColor(context.getResources().getColor(R.color.defaultWhite,null));
+                                    tv_sensorValue5.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    break;
+                                case 5 :
+                                    tv_sensorValue1.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue2.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue3.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue4.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_unselect,null));
+                                    tv_sensorValue5.setBackground(context.getResources().getDrawable(R.drawable.background_popup_sensor_select,null));
+                                    tv_sensorValue1.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue2.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue3.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue4.setTextColor(context.getResources().getColor(R.color.unselect,null));
+                                    tv_sensorValue5.setTextColor(context.getResources().getColor(R.color.defaultWhite,null));
+                                    break;
+
+
+                            }
+                            return true;
+                        }
+                    });
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

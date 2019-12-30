@@ -9,4 +9,5 @@
     <color name="dialogCancleGray">#bdbdbd</color>
     <color name="defaultBlue">#2cc1d4</color>
     <color name="blank">#00000000</color>
+    <color name="unselect">#313131</color>
 </resources>

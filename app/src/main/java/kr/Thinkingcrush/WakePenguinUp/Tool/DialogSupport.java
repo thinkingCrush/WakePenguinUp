@@ -106,4 +106,14 @@ public class DialogSupport {
         }
         return "#FC1234";
     }
+
+    public void sensorDialog(Context context){
+        try{
+            DialogManager.SensorDialog sensorDialog = new DialogManager.SensorDialog(context);
+            sensorDialog.show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 }
