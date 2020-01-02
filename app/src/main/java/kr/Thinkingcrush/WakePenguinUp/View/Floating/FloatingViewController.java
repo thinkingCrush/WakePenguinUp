@@ -164,7 +164,7 @@ public class FloatingViewController {
 
                     case GoneFloating :
                         try{
-                            Dlog.e("GoneFloating");
+                            //Dlog.e("GoneFloating");
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -184,9 +184,8 @@ public class FloatingViewController {
 
                     case VisibleFloating :
                         try{
-                            Dlog.e("VisibleFloating TouchLockFlag : " + MainActivity.TouchLockFlag);
+                            //Dlog.e("VisibleFloating TouchLockFlag : " + MainActivity.TouchLockFlag);
                             if(!MainActivity.TouchLockFlag){
-                                Dlog.e("test 1111");
                                 iv_floating_lock.setVisibility(View.VISIBLE);
                                 iv_floating_lock.setImageDrawable(context.getResources().getDrawable(R.drawable.img_unlock,null));
                                 rl_outfloatingLayout.setVisibility(View.VISIBLE);
@@ -222,6 +221,7 @@ public class FloatingViewController {
                         break;
 
                     case TimerText :
+                        Dlog.e("TimerText");
                         try{
                             tv_timerText.setVisibility(View.INVISIBLE);
                             tv_timerText.setText(String.valueOf(msg.obj));
@@ -240,6 +240,7 @@ public class FloatingViewController {
                         break;
 
                     case FinishText :
+                        Dlog.e("FinishText");
                         try{
                             tv_timerText.setVisibility(View.INVISIBLE);
                             tv_timerText.setText(String.valueOf(msg.obj));
@@ -306,24 +307,27 @@ public class FloatingViewController {
                                     floatingHandler.obtainMessage(ImageViewFloating,null).sendToTarget();
                                     startGif(R.drawable.change_image_sleep);
                                     //몇분 후 종료됩니다.
-                                    try{
-                                        String hourMin = new SharedWPU().getAlarmTime(context);
-                                        int hour = Integer.parseInt(hourMin.split("/")[0])*60;
-                                        int min = Integer.parseInt(hourMin.split("/")[1]);
-                                        if(checkKorea(context)){
-                                            if(hour == 0){
-                                                timerText(String.valueOf(min)+"분 "+context.getResources().getString(R.string.popup_timer_alarm));
+                                    if(new SharedWPU().getAlarm(context)){
+                                        try{
+                                            String hourMin = new SharedWPU().getAlarmTime(context);
+                                            int hour = Integer.parseInt(hourMin.split("/")[0])*60;
+                                            int min = Integer.parseInt(hourMin.split("/")[1]);
+                                            if(checkKorea(context)){
+                                                if(hour == 0){
+                                                    timerText(String.valueOf(min)+"분 "+context.getResources().getString(R.string.popup_timer_alarm));
+                                                }else{
+                                                    timerText(String.valueOf(hour)+"시간 "+String.valueOf(min)+"분 "+context.getResources().getString(R.string.popup_timer_alarm));
+                                                }
                                             }else{
-                                                timerText(String.valueOf(hour)+"시간 "+String.valueOf(min)+"분 "+context.getResources().getString(R.string.popup_timer_alarm));
+                                                @SuppressLint({"StringFormatMatches", "StringFormatInvalid", "LocalSuppress"}) String message = String.format(context.getResources().getString(R.string.popup_timer_alarm),hour,min);
+                                                timerText(message);
                                             }
-                                        }else{
-                                            @SuppressLint({"StringFormatMatches", "StringFormatInvalid", "LocalSuppress"}) String message = String.format(context.getResources().getString(R.string.popup_timer_alarm),hour,min);
-                                            timerText(message);
-                                        }
 
-                                    }catch (Exception e){
-                                        e.printStackTrace();
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
                                     }
+
 
                                     new SoundPlay().playSound(context);
                                 }

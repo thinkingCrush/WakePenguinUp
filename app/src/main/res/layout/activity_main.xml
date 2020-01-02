@@ -37,7 +37,13 @@
                     android:gravity="right|center"
                     android:layout_weight="1"
                     android:orientation="horizontal">
-
+                <ImageView
+                        android:id="@+id/iv_editShake"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:layout_marginRight="18dp"
+                        android:src="@drawable/icon_shake"/>
                 <ImageView
                         android:id="@+id/iv_editTimer"
                         android:layout_width="wrap_content"

@@ -45,4 +45,8 @@
     <string name="popup_sensor_select4">Strongly</string>
     <string name="popup_sensor_select5">Very strongly</string>
 
+    <string name="admob_app_id">ca-app-pub-2028686242886111~9632276770</string>
+    <string name="front_ad_unit_id">ca-app-pub-2028686242886111/3066868425</string>
+    <string name="front_ad_unit_id_for_test">ca-app-pub-3940256099942544/1033173712</string>
+
 </resources>

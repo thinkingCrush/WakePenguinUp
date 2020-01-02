@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import kr.Thinkingcrush.WakePenguinUp.Data.UrlArray;
+import kr.Thinkingcrush.WakePenguinUp.MainActivity;
 import kr.Thinkingcrush.WakePenguinUp.R;
 
 public class SharedWPU {
@@ -176,8 +177,9 @@ public class SharedWPU {
 
     public int getSensor(Context context){
         SharedPreferences firstUser =  context.getSharedPreferences("WPU",Context.MODE_PRIVATE);
-        return firstUser.getInt("Sensor",3);
-
+        int sensorValue = firstUser.getInt("Sensor",3);
+        MainActivity.shakeGravity = sensorValue;
+        return sensorValue;
     }
     public void setSensor(Context context,int sensorValue){
 
@@ -186,6 +188,7 @@ public class SharedWPU {
             SharedPreferences.Editor editor = firstUser.edit();
             editor.putInt("Sensor",sensorValue);
             editor.apply();
+            MainActivity.shakeGravity = sensorValue;
         }catch (Exception e){
             e.printStackTrace();
         }

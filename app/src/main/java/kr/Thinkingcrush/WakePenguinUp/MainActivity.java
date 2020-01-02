@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +37,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
@@ -68,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static TextView tv_emptySide;
     ImageView iv_sideListEdit ;
     ImageView iv_editTimer;
+    ImageView iv_editShake;
 
     public static Context mainContext;
 
@@ -199,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static void finishService(final Context context){
         try{
-            Dlog.e("finishService touchLockFlag : " + TouchLockFlag);
+            //Dlog.e("finishService touchLockFlag : " + TouchLockFlag);
             if(!TouchLockFlag){
                 if(context!=null){
                     if(isMyServiceRunning(context,FloatingService.class)){
@@ -297,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if(pageNumber != PageNumber.UrlListFragment.ordinal()){
-                    Dlog.e("test 3333");
                     //startService(mainContext);
                     MainActivity.visibleFloating();
                 }
@@ -335,8 +341,62 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 new DialogSupport().alarmDialog(MainActivity.this);
             }
         });
+
+        iv_editShake = findViewById(R.id.iv_editShake);
+        iv_editShake.setOnTouchListener(new ViewClickEffect());
+        iv_editShake.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawer(drawerContainer);
+                MainActivity.stopFloating();
+
+                new DialogSupport().sensorDialog(MainActivity.this);
+            }
+        });
         initDrawerListView();
+
+        MobileAds.initialize(this,getString(R.string.admob_app_id));
+        interstitialAd = new InterstitialAd(getApplicationContext());
+        interstitialAd.setAdUnitId(getString(R.string.front_ad_unit_id_for_test));
+        interstitialAd.loadAd(new AdRequest.Builder().build());
+        interstitialAd.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                Dlog.e("onAdLoaded");
+            }
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Dlog.e("onAdFailedToLoad");
+            }
+            @Override
+            public void onAdOpened() {
+                Dlog.e("onAdOpened");
+            }
+            @Override
+            public void onAdClicked() {
+                Dlog.e("onAdClicked");
+            }
+            @Override
+            public void onAdLeftApplication() {
+                Dlog.e("onAdLeftApplication");
+            }
+            @Override
+            public void onAdClosed() {
+                Dlog.e("onAdClosed");
+            }
+        });
+        loadAd();
     }
+
+    private static InterstitialAd interstitialAd;
+
+
+    private void loadAd(){
+        if(interstitialAd.isLoaded()){
+            interstitialAd.show();
+        }
+    }
+
 
     private static BaseAdapter sideListAdapter ;
     private void initDrawerListView(){
@@ -404,7 +464,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onClick(View v) {
             try{
-                Dlog.e("test 1111");
                 if(mDrawerLayout != null){
                     mDrawerLayout.openDrawer(drawerContainer);
                 }
@@ -442,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static Timer finishTimer = null;
     public void touchLock(){
         try{
-            Dlog.e("touch Lock");
+            //Dlog.e("touch Lock");
             TouchLockFlag = true;
             registerTouch();
 
@@ -463,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Dlog.e("Timer Finish!!");
+                                //Dlog.e("Timer Finish!!");
                                 stopFloatingBackPressed(getBaseContext());
                                 finishAffinity();
                                 System.runFinalization();
@@ -474,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         },3000);
                     }
                 },hour+min,hour+min);
-
+            }else{
 
             }
         }catch (Exception e){
@@ -565,8 +624,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private long shakeTime ;
     private static final int SHAKE_SKIP_TIME = 600;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 6.0f;
 
+    private static final float SHAKE_THRESHOLD_GRAVITY_1 = 3.0f;
+    private static final float SHAKE_THRESHOLD_GRAVITY_2 = 4.5f;
+    private static final float SHAKE_THRESHOLD_GRAVITY_3 = 6.0f;
+    private static final float SHAKE_THRESHOLD_GRAVITY_4 = 8.0f;
+    private static final float SHAKE_THRESHOLD_GRAVITY_5 = 10.0f;
+    public static int shakeGravity = 0;
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
@@ -582,16 +646,72 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Float f = (gravityX * gravityX) +(gravityY * gravityY) + (gravityZ * gravityZ);
             double squaredD = Math.sqrt(f.doubleValue());
             float gForce = (float)squaredD;
-            if(gForce > SHAKE_THRESHOLD_GRAVITY){
-                long currentTime = System.currentTimeMillis();
-                if(shakeTime + SHAKE_SKIP_TIME > currentTime){
-                    return;
-                }
-                shakeTime = currentTime;
-                shakeTime ++;
-                new VibratorSupport().doVibrator(mainContext,300);
-                touchUnLock(mainContext);
+            if(shakeGravity ==0){
+                shakeGravity = new SharedWPU().getSensor(MainActivity.this);
             }
+            switch (shakeGravity){
+                case 1 :
+                    if(gForce > SHAKE_THRESHOLD_GRAVITY_1){
+                        long currentTime = System.currentTimeMillis();
+                        if(shakeTime + SHAKE_SKIP_TIME > currentTime){
+                            return;
+                        }
+                        shakeTime = currentTime;
+                        shakeTime ++;
+                        new VibratorSupport().doVibrator(mainContext,300);
+                        touchUnLock(mainContext);
+                    }
+                    break;
+                case 2 :
+                    if(gForce > SHAKE_THRESHOLD_GRAVITY_2){
+                        long currentTime = System.currentTimeMillis();
+                        if(shakeTime + SHAKE_SKIP_TIME > currentTime){
+                            return;
+                        }
+                        shakeTime = currentTime;
+                        shakeTime ++;
+                        new VibratorSupport().doVibrator(mainContext,300);
+                        touchUnLock(mainContext);
+                    }
+                    break;
+                case 3 :
+                    if(gForce > SHAKE_THRESHOLD_GRAVITY_3){
+                        long currentTime = System.currentTimeMillis();
+                        if(shakeTime + SHAKE_SKIP_TIME > currentTime){
+                            return;
+                        }
+                        shakeTime = currentTime;
+                        shakeTime ++;
+                        new VibratorSupport().doVibrator(mainContext,300);
+                        touchUnLock(mainContext);
+                    }
+                    break;
+                case 4 :
+                    if(gForce > SHAKE_THRESHOLD_GRAVITY_4){
+                        long currentTime = System.currentTimeMillis();
+                        if(shakeTime + SHAKE_SKIP_TIME > currentTime){
+                            return;
+                        }
+                        shakeTime = currentTime;
+                        shakeTime ++;
+                        new VibratorSupport().doVibrator(mainContext,300);
+                        touchUnLock(mainContext);
+                    }
+                    break;
+                case 5 :
+                    if(gForce > SHAKE_THRESHOLD_GRAVITY_5){
+                        long currentTime = System.currentTimeMillis();
+                        if(shakeTime + SHAKE_SKIP_TIME > currentTime){
+                            return;
+                        }
+                        shakeTime = currentTime;
+                        shakeTime ++;
+                        new VibratorSupport().doVibrator(mainContext,300);
+                        touchUnLock(mainContext);
+                    }
+                    break;
+            }
+
         }
     }
 

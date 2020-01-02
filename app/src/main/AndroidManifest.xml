@@ -22,6 +22,9 @@
             android:supportsRtl="true"
             android:usesCleartextTraffic="true"
             android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id"/>
 
         <activity android:name="kr.Thinkingcrush.WakePenguinUp.SplashActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
